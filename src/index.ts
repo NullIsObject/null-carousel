@@ -1,1 +1,5 @@
-console.log("hello world")
+import useCarousel from "./utils/use-carousel"
+
+export {
+  useCarousel
+}
