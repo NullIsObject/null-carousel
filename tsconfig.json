@@ -1,0 +1,24 @@
+{
+  "include": [
+    "./src"
+  ],
+  "ts-node": {
+    "files": true
+  },
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "noEmitOnError": false,
+    "target": "ES2016",
+    "module": "ESNext",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": [
+      "ESNext",
+      "dom"
+    ],
+    "removeComments": true,
+    "strict": true
+  }
+}
