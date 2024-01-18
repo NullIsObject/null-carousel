@@ -19,6 +19,7 @@
       "dom"
     ],
     "removeComments": true,
-    "strict": true
+    "strict": true,
+    "moduleResolution": "node"
   }
 }

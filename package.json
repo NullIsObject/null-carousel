@@ -18,6 +18,8 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
     "rollup": "^4.9.5",
-    "tslib": "^2.6.2"
+    "rollup-plugin-vue": "^6.0.0",
+    "tslib": "^2.6.2",
+    "vue": "^2"
   }
 }
