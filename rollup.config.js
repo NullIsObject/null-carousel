@@ -22,9 +22,7 @@ export default {
         }
       }
     },
-    vue({
-      target: "lib"
-    }),
+    vue(),
     typescript(),
   ],
   watch: {
