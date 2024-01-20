@@ -5,7 +5,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dist": "rollup -c"
+    "dist": "rollup -c -w"
   },
   "repository": {
     "type": "git",
@@ -17,8 +17,9 @@
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
+    "fs-extra": "^11.2.0",
     "rollup": "^4.9.5",
-    "rollup-plugin-vue": "^6.0.0",
+    "rollup-plugin-vue": "5",
     "tslib": "^2.6.2",
     "vue": "^2"
   }

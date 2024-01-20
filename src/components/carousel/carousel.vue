@@ -1,9 +1,7 @@
-<script lang="ts">
-import {defineComponent} from "vue"
-
-export default defineComponent({
-  name: "carousel"
-})
+<script setup lang="ts">
+defineProps<{
+  data: any[]
+}>()
 </script>
 <template>
   <div></div>

@@ -20,6 +20,7 @@
     ],
     "removeComments": true,
     "strict": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "declaration": true
   }
 }

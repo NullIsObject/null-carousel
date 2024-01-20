@@ -1,6 +1,6 @@
 import useCarousel from "src/utils/use-carousel"
 
-export * from "src/components/index"
+export * from "./components/index.js"
 export {
   useCarousel
 }

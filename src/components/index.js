@@ -1,5 +1,5 @@
-import carousel from "./carousel/index.js"
+import Carousel from "./carousel/index.js"
 
 export {
-  carousel
+  Carousel
 }
