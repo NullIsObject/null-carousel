@@ -5,12 +5,12 @@ import path           from "path"
 export default defineConfig({
   plugins: [vue()],
   resolve: {
-    // 配置路径别名
     alias: {
       "src": path.resolve(__dirname, "./src"),
     },
   },
   build: {
+    outDir: "./dist",
     sourcemap: true,
     lib: {
       entry: "./src/index.ts",
