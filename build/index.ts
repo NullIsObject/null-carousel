@@ -1,6 +1,6 @@
-import {defineBuildConfig} from "unbuild"
+import {build, BuildConfig} from "unbuild"
 
-export default defineBuildConfig({
+const config: BuildConfig = {
   outDir: "dist",
   entries: [
     // "./src/index",
@@ -25,4 +25,8 @@ export default defineBuildConfig({
   // alias: {
   //   "src": "./src"
   // }
+}
+
+build("./", false, config).then((...args) => {
+  console.log(args)
 })
