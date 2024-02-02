@@ -1,4 +1,6 @@
 {
   "name": "packages",
-  "type": "module"
+  "type": "module",
+  "main": "index.ts",
+  "module": "index.ts"
 }

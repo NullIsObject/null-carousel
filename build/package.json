@@ -1,7 +1,12 @@
 {
   "name": "build",
   "type": "module",
+  "main": "index.ts",
+  "module": "index.ts",
   "scripts": {
     "build": "node --experimental-loader ts-node/esm ./index.ts"
-  }
+  },
+  "peerDependencies": {
+  },
+  "sideEffects": false
 }
