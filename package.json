@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "node --experimental-loader ts-node/esm ./build/index.ts",
+    "build": "pnpm run -C build build",
     "preview": "vite preview"
   },
   "repository": {
@@ -17,10 +17,9 @@
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "devDependencies": {
+    "build": "workspace:*",
+    "packages": "workspace:*",
     "@types/node": "^20.11.5",
     "@vitejs/plugin-vue2": "^2.3.1",
     "ts-node": "^10.9.2",

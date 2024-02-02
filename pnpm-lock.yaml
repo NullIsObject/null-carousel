@@ -4,25 +4,40 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-devDependencies:
-  '@types/node':
-    specifier: ^20.11.5
-    version: 20.11.5
-  '@vitejs/plugin-vue2':
-    specifier: ^2.3.1
-    version: 2.3.1(vite@5.0.12)(vue@2.7.16)
-  ts-node:
-    specifier: ^10.9.2
-    version: 10.9.2(@types/node@20.11.5)(typescript@5.3.3)
-  unbuild:
-    specifier: ^2.0.0
-    version: 2.0.0(typescript@5.3.3)
-  vite:
-    specifier: ^5.0.12
-    version: 5.0.12(@types/node@20.11.5)
-  vue:
-    specifier: ^2
-    version: 2.7.16
+importers:
+
+  .:
+    devDependencies:
+      packages:
+
+        specifier: workspace:*
+
+        version: link:packages
+      '@types/node':
+        specifier: ^20.11.5
+        version: 20.11.5
+      '@vitejs/plugin-vue2':
+        specifier: ^2.3.1
+        version: 2.3.1(vite@5.0.12)(vue@2.7.16)
+      build:
+        specifier: workspace:*
+        version: link:build
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@20.11.5)(typescript@5.3.3)
+      unbuild:
+        specifier: ^2.0.0
+        version: 2.0.0(typescript@5.3.3)
+      vite:
+        specifier: ^5.0.12
+        version: 5.0.12(@types/node@20.11.5)
+      vue:
+        specifier: ^2
+        version: 2.7.16
+
+  build: {}
+
+  packages: {}
 
 packages:
 

@@ -1,0 +1,7 @@
+{
+  "name": "build",
+  "type": "module",
+  "scripts": {
+    "build": "node --experimental-loader ts-node/esm ./index.ts"
+  }
+}
