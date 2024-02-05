@@ -5,9 +5,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "vite",
     "build": "pnpm run -C build build",
-    "preview": "vite preview"
+    "build:vite": "vite build"
   },
   "repository": {
     "type": "git",
@@ -18,12 +17,14 @@
     "npm": ">=8.0.0"
   },
   "devDependencies": {
-    "build": "workspace:*",
-    "packages": "workspace:*",
     "@types/node": "^20.11.5",
     "@vitejs/plugin-vue2": "^2.3.1",
+    "build": "workspace:*",
+    "packages": "workspace:*",
+    "rollup-plugin-dts": "^6.1.0",
     "ts-node": "^10.9.2",
     "unbuild": "^2.0.0",
+    "untyped": "^1.4.2",
     "vite": "^5.0.12",
     "vue": "^2"
   }
