@@ -4,7 +4,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "scripts": {
-    "build": "node --experimental-loader ts-node/esm ./index.ts"
+    "build:packages": "jiti ./packages.ts"
   },
   "peerDependencies": {
   },

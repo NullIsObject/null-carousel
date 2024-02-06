@@ -7,7 +7,7 @@ export default defineConfig({
     outDir: "./dist",
     sourcemap: true,
     lib: {
-      entry: "./src/index.ts",
+      entry: "./packages",
       formats: ["es"],
     },
     rollupOptions: {
