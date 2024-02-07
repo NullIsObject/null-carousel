@@ -17,10 +17,14 @@
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
+    "build": "workspace:*",
     "fs-extra": "^11.2.0",
+    "jiti": "^1.21.0",
+    "packages": "workspace:*",
     "rollup": "^4.9.5",
     "rollup-plugin-vue": "5",
     "tslib": "^2.6.2",
+    "typescript": "^5.3.3",
     "vue": "^2"
   }
 }

@@ -4,25 +4,46 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-devDependencies:
-  '@rollup/plugin-typescript':
-    specifier: ^11.1.6
-    version: 11.1.6(rollup@4.9.5)(tslib@2.6.2)(typescript@5.3.3)
-  fs-extra:
-    specifier: ^11.2.0
-    version: 11.2.0
-  rollup:
-    specifier: ^4.9.5
-    version: 4.9.5
-  rollup-plugin-vue:
-    specifier: '5'
-    version: 5.1.9(postcss@8.4.33)(vue-template-compiler@2.7.16)
-  tslib:
-    specifier: ^2.6.2
-    version: 2.6.2
-  vue:
-    specifier: ^2
-    version: 2.7.16
+importers:
+
+  .:
+    devDependencies:
+      packages:
+
+        specifier: workspace:*
+
+        version: link:packages
+      '@rollup/plugin-typescript':
+        specifier: ^11.1.6
+        version: 11.1.6(rollup@4.9.5)(tslib@2.6.2)(typescript@5.3.3)
+      build:
+        specifier: workspace:*
+        version: link:build
+      fs-extra:
+        specifier: ^11.2.0
+        version: 11.2.0
+      jiti:
+        specifier: ^1.21.0
+        version: 1.21.0
+      rollup:
+        specifier: ^4.9.5
+        version: 4.9.5
+      rollup-plugin-vue:
+        specifier: '5'
+        version: 5.1.9(postcss@8.4.33)(vue-template-compiler@2.7.16)
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.2
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+      vue:
+        specifier: ^2
+        version: 2.7.16
+
+  build: {}
+
+  packages: {}
 
 packages:
 
@@ -1077,6 +1098,11 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /jiti@1.21.0:
+    resolution: {integrity: sha512-gFqAIbuKyyso/3G2qhiO2OM6shY6EPP/R0+mkDbyspxKazh8BXDC5FiFsUjlczgdNz/vfra0da2y+aHrusLG/Q==}
+    hasBin: true
+    dev: true
 
   /js-base64@2.6.4:
     resolution: {integrity: sha512-pZe//GGmwJndub7ZghVHz7vjb2LgC1m8B07Au3eYqeqv9emhESByMXxaEgkUkEqJe87oBbSniGYoQNIBklc7IQ==}
