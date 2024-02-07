@@ -1,32 +1,33 @@
-import typescript from "@rollup/plugin-typescript"
-import vue        from "rollup-plugin-vue"
-import fs         from "fs-extra"
+import {nodeResolve} from "@rollup/plugin-node-resolve"
+import vue           from "rollup-plugin-vue"
+import esbuild       from "rollup-plugin-esbuild"
+import fs            from "fs-extra"
 
 export default {
-  input: "src/index.js",
+  input: "packages/index.ts",
   output: {
     format: "module",
     sourcemap: true,
     dir: "dist",
     preserveModules: true,
   },
-  external: [/node_modules/],
+  external: [/node_modules/, /vue-runtime-helpers/],
   plugins: [
     {
       name: "fileCRUD",
       load() {
-        try {
-          fs.removeSync("./dist")
-        } catch (e) {
-          console.log(e)
-        }
+        if (fs.pathExistsSync("./")) fs.removeSync("./dist")
       }
     },
+    nodeResolve({
+      extensions: [".mjs", ".js", ".json", ".ts"],
+    }),
     vue(),
-    typescript(),
-  ],
-  watch: {
-    clearScreen: true,
-    include: "src/**",
-  }
+    esbuild({
+      sourceMap: true,
+      loaders: {
+        ".vue": "ts",
+      },
+    }),
+  ]
 }

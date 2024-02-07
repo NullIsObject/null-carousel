@@ -5,7 +5,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dist": "rollup -c -w"
+    "dist": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -16,12 +16,14 @@
     "npm": ">=8.0.0"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.1.6",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/node": "^20.11.16",
     "build": "workspace:*",
     "fs-extra": "^11.2.0",
     "jiti": "^1.21.0",
     "packages": "workspace:*",
     "rollup": "^4.9.5",
+    "rollup-plugin-esbuild": "^6.1.1",
     "rollup-plugin-vue": "5",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3",
