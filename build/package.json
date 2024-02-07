@@ -1,0 +1,21 @@
+{
+  "name": "build",
+  "packageManager": "pnpm@8.14.1",
+  "type": "module",
+  "main": "index.ts",
+  "module": "index.ts",
+  "scripts": {
+    "build:packages": "jiti ./packages.ts"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/node": "^20.11.16",
+    "fs-extra": "^11.2.0",
+    "jiti": "^1.21.0",
+    "mkdist": "^1.4.0",
+    "rollup": "^4.9.6",
+    "rollup-plugin-esbuild": "^6.1.1",
+    "rollup-plugin-vue": "5"
+  }
+}
