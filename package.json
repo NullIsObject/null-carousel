@@ -21,6 +21,7 @@
     "build": "workspace:*",
     "fs-extra": "^11.2.0",
     "jiti": "^1.21.0",
+    "mkdist": "^1.4.0",
     "packages": "workspace:*",
     "rollup": "^4.9.5",
     "rollup-plugin-esbuild": "^6.1.1",
