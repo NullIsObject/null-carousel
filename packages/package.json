@@ -2,5 +2,8 @@
   "name": "packages",
   "type": "module",
   "main": "index.ts",
-  "module": "index.ts"
+  "module": "index.ts",
+  "peerDependencies": {
+    "vue": ">=2.7.0"
+  }
 }
