@@ -50,7 +50,7 @@ function build(version: TARGET_VERSION) {
         preserveModules: true,
       }
     ],
-    external: [/vue/, /vue-runtime-helpers/],
+    external: [/^vue$/, /vue-runtime-helpers/],
     plugins: [
       {
         name: "fileCRUD",
