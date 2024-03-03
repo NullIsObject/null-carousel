@@ -1,6 +1,6 @@
 import {computed, reactive, readonly} from "vue"
 
-function useCarousel(dataList: Object[]) {
+function useCarousel<T extends Object>(dataList: T[]) {
   const state = reactive({
     index: 0,
     dataList: dataList,
