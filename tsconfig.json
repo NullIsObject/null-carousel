@@ -2,15 +2,12 @@
   "include": [
     "./packages"
   ],
-  "ts-node": {
-    "files": true
-  },
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": ".",
     "noEmitOnError": false,
-    "target": "ES2016",
-    "module": "ESNext",
+    "target": "ES5",
+    "module": "ES6",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
