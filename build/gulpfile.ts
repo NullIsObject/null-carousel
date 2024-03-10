@@ -55,11 +55,21 @@ export function build() {
 }
 
 export function outPkgJSON() {
-  const packageJSON = require("packages/package.json")
-  const rootConfig = require("root/package.json")
+  const rootPkg = require("root/package.json")
+  const packagesPkg = require("packages/package.json")
   const outputPath = resolve(root, outDir, "package.json")
-  packageJSON.name = rootConfig.name
-  return writeJson(outputPath, packageJSON, {spaces: 2})
+  const finalPkg = {
+    ...rootPkg,
+    ...packagesPkg,
+  }
+  finalPkg.name = rootPkg.name
+  finalPkg.dependencies = packagesPkg.dependencies
+  finalPkg.devDependencies = packagesPkg.devDependencies
+  finalPkg.peerDependencies = packagesPkg.peerDependencies
+  finalPkg.packageManager = void 0
+  finalPkg.scripts = void 0
+  finalPkg.engines = void 0
+  return writeJson(outputPath, finalPkg, {spaces: 2})
 }
 
 export function outReadme() {
