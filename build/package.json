@@ -11,6 +11,7 @@
   "devDependencies": {
     "@esbuild-kit/cjs-loader": "^2.4.4",
     "@types/fs-extra": "^11.0.4",
+    "@types/gulp": "^4.0.17",
     "@types/node": "^20.11.24",
     "@vitejs/plugin-vue": "^5.0.4",
     "fs-extra": "^11.2.0",

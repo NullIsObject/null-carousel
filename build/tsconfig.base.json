@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "noEmitOnError": false,
+    "module": "ES6",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "removeComments": true,
+    "strict": true,
+    "moduleResolution": "node"
+  }
+}

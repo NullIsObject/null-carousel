@@ -1,24 +1,3 @@
 {
-  "include": [
-    "./packages"
-  ],
-  "compilerOptions": {
-    "outDir": "./dist",
-    "baseUrl": ".",
-    "noEmitOnError": false,
-    "target": "ES5",
-    "module": "ES6",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "lib": [
-      "ESNext",
-      "dom"
-    ],
-    "removeComments": true,
-    "strict": true,
-    "moduleResolution": "node",
-    "declaration": true,
-    "emitDeclarationOnly": true
-  }
+  "extends": ["./build/tsconfig.base.json"],
 }
