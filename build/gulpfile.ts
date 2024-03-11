@@ -1,18 +1,24 @@
 import {
   series, parallel
-}                from "gulp"
+}                      from "gulp"
 import {
   build as vite
-}                from "vite"
-import {exec}    from "child_process"
-import {resolve} from "path"
+}                      from "vite"
+import path, {resolve} from "path"
 import {
   remove, writeJson, mkdirs, copy
-}                from "fs-extra"
-import vue       from "@vitejs/plugin-vue"
+}                      from "fs-extra"
+import vue             from "@vitejs/plugin-vue"
+import {
+  createProgram,
+}                      from "vue-tsc"
+import {
+  createCompilerHost, CompilerOptions
+}                      from "typescript"
 
 const root = resolve(__dirname, "../")
 const outDir = "dist/packages"
+const entryDir = "packages"
 
 export async function initOutDir() {
   await remove(resolve(root, outDir))
@@ -20,13 +26,20 @@ export async function initOutDir() {
 }
 
 export function tsc() {
-  return new Promise((resolve, reject) => {
-    exec("vue-tsc -p ./tsconfig.packages.json", (error, stdout, stderr) => {
-      if (error) reject(error)
-      else if (stderr) reject(stderr)
-      else resolve(stdout)
-    })
-  })
+  const compilerOptions: CompilerOptions = {
+    outDir: path.join(root, outDir),
+    allowJs: true,
+    declaration: true,
+    incremental: true,
+    skipLibCheck: true,
+    strictNullChecks: true,
+    emitDeclarationOnly: true,
+  }
+  return Promise.resolve(createProgram({
+    rootNames: [resolve(root, entryDir, "index")],
+    options: compilerOptions,
+    host: createCompilerHost(compilerOptions)
+  }).emit())
 }
 
 export function build() {

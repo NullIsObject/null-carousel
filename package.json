@@ -23,8 +23,8 @@
     "components"
   ],
   "devDependencies": {
-    "root": "workspace:./",
     "build": "workspace:*",
-    "packages": "workspace:*"
+    "packages": "workspace:*",
+    "root": "workspace:./"
   }
 }
