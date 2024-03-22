@@ -1,7 +1,11 @@
 {
-  "extends": ["./tsconfig.base.json"],
   "compilerOptions": {
     "moduleResolution": "node",
-    "target": "ESNext"
+    "target": "ESNext",
+    "module": "ES6",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true
   }
 }
