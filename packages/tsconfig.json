@@ -1,6 +1,6 @@
 {
   "extends": [
-    "build/tsconfig.base.json"
+    "@null-carousel/build/tsconfig.base.json"
   ],
   "include": [
     "./**/*.ts",

@@ -1,5 +1,5 @@
 {
-  "name": "packages",
+  "name": "@null-carousel/packages",
   "type": "module",
   "main": "index.ts",
   "module": "index.ts",

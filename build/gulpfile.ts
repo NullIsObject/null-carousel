@@ -69,8 +69,8 @@ export function build() {
 }
 
 export function outPkgJSON() {
-  const rootPkg = require("root/package.json")
-  const packagesPkg = require("packages/package.json")
+  const rootPkg = require("@null-carousel/root/package.json")
+  const packagesPkg = require("@null-carousel/packages/package.json")
   const outputPath = path.resolve(root, outDir, "package.json")
   const finalPkg = {
     ...rootPkg,

@@ -8,15 +8,13 @@ importers:
 
   .:
     devDependencies:
-      packages:
-
-        specifier: workspace:*
-
-        version: link:packages
-      build:
+      '@null-carousel/build':
         specifier: workspace:*
         version: link:build
-      root:
+      '@null-carousel/packages':
+        specifier: workspace:*
+        version: link:packages
+      '@null-carousel/root':
         specifier: workspace:./
         version: 'link:'
 

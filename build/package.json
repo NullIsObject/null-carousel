@@ -1,5 +1,5 @@
 {
-  "name": "build",
+  "name": "@null-carousel/build",
   "packageManager": "pnpm@8.14.1",
   "type": "module",
   "main": "index.ts",
