@@ -1,8 +1,8 @@
 {
-  "name": "packages",
+  "name": "@null-carousel/packages",
   "type": "module",
-  "main": "index.ts",
-  "module": "index.ts",
+  "main": "index",
+  "module": "index",
   "peerDependencies": {
     "vue": ">=2.7.0"
   }

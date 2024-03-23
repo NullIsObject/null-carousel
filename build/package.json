@@ -1,22 +1,24 @@
 {
-  "name": "build",
+  "name": "@null-carousel/build",
   "packageManager": "pnpm@8.14.1",
   "type": "module",
   "main": "index.ts",
   "module": "index.ts",
   "scripts": {
-    "build:packages": "jiti ./packages.ts"
+    "build:packages": "gulp --require @esbuild-kit/cjs-loader -f gulpfile.ts"
   },
   "sideEffects": false,
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@types/node": "^20.11.16",
+    "@esbuild-kit/cjs-loader": "^2.4.4",
+    "@types/fs-extra": "^11.0.4",
+    "@types/gulp": "^4.0.17",
+    "@types/node": "^20.11.24",
+    "@vitejs/plugin-vue": "^5.0.4",
     "fs-extra": "^11.2.0",
+    "gulp": "^4.0.2",
     "jiti": "^1.21.0",
-    "mkdist": "^1.4.0",
-    "rollup": "^4.9.6",
-    "rollup-plugin-esbuild": "^6.1.1",
-    "rollup-plugin-vue2": "npm:rollup-plugin-vue@5",
-    "rollup-plugin-vue3": "npm:rollup-plugin-vue@^6.0.0"
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4",
+    "vue-tsc": "^1.8.27"
   }
 }
