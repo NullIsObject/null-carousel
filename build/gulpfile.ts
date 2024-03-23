@@ -79,13 +79,16 @@ export function build() {
   })
 }
 
-export function outPkgJSON() {
-  const rootPkg: Record<string, any> = require("@null-carousel/root/package.json")
-  const packagesPkg: Record<string, any> = require("@null-carousel/packages/package.json")
+export async function outPkgJSON() {
+  const rootPkg: Record<string, any> = fs.readJSONSync(path.resolve(root, "package.json"))
+  const packagesPkg: Record<string, any> = fs.readJSONSync(path.resolve(root, "packages", "package.json"))
   const outputPath = path.resolve(root, outDir, "package.json")
-  const finalPkg = {
+  const finalPkg: Record<string, any> = {
     ...rootPkg,
     ...packagesPkg,
+    exports: {
+      ".": "./index"
+    }
   }
   finalPkg.name = rootPkg.name
   finalPkg.dependencies = packagesPkg.dependencies
@@ -94,7 +97,7 @@ export function outPkgJSON() {
   finalPkg.packageManager = void 0
   finalPkg.scripts = void 0
   finalPkg.engines = void 0
-  return fs.writeJson(outputPath, finalPkg, {spaces: 2})
+  fs.writeJSONSync(outputPath, finalPkg, {spaces: 2})
 }
 
 export function outReadme() {
