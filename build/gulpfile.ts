@@ -1,56 +1,54 @@
 import {
   series, parallel
-}           from "gulp"
+}                  from "gulp"
 import {
   build as vite
-}           from "vite"
-import path from "path"
-import fs   from "fs-extra"
-import vue  from "@vitejs/plugin-vue"
-import {
-  createProgram,
-}           from "vue-tsc"
-import {
-  createCompilerHost, CompilerOptions
-}           from "typescript"
+}                  from "vite"
+import path        from "path"
+import fs          from "fs-extra"
+import vue         from "@vitejs/plugin-vue"
+import * as vueTsc from "vue-tsc"
+import ts          from "typescript"
+import consola     from "consola"
 
 const root = path.resolve(__dirname, "../")
 const outDir = "dist/packages"
 const entryDir = "packages"
 
-export async function initOutDir() {
+export async function clean() {
   await fs.remove(path.resolve(root, outDir))
   await fs.mkdirs(path.resolve(root, outDir))
 }
 
 export async function tsc() {
-  const compilerOptions: CompilerOptions = {
+  const options: ts.CompilerOptions = {
     outDir: path.resolve(root, outDir),
     allowJs: true,
     declaration: true,
     incremental: true,
-    // skipLibCheck: true,
     strict: true,
     emitDeclarationOnly: true,
   }
-  {
-    const include = [".vue", ".ts", ".tsx"]
-    const dir = path.resolve(root, entryDir)
-    createProgram({
-      rootNames: readFilesRecursive({dir, include}),
-      options: compilerOptions,
-      host: createCompilerHost(compilerOptions)
-    }).emit()
+  const host = ts.createCompilerHost(options)
+  const include = [".vue", ".ts", ".tsx"]
+  const dir = path.resolve(root, entryDir)
+  const rootNames = readFilesRecursive({dir, include})
+  const program = vueTsc.createProgram({rootNames, options, host})
+  const diagnostics = getTsDiagnostics(program)
+  if (diagnostics.length) {
+    consola.error(ts.formatDiagnosticsWithColorAndContext(diagnostics, host))
+    return
   }
-  {
-    const include = [".d.ts"]
-    const dir = path.resolve(root, outDir)
-    const fileList = readFilesRecursive({dir, include})
-    for (const fileName of fileList) {
-      let content = fs.readFileSync(fileName).toString()
-      content = content.replaceAll("@null-carousel/packages", "null-carousel")
-      fs.writeFileSync(fileName, content)
-    }
+  const sourceFiles = program.getSourceFiles()
+  const outputFiles: ts.OutputFile[] = []
+  for (const sourceFile of sourceFiles) {
+    const files = program.__vue.languageService.getEmitOutput(sourceFile.fileName, true).outputFiles
+    outputFiles.push(...files)
+  }
+  for (const outputFile of outputFiles) {
+    const content = outputFile.text.replaceAll("@null-carousel/packages", "null-carousel")
+    forceCreateFile(outputFile.name)
+    fs.writeFileSync(outputFile.name, content, "utf-8")
   }
 }
 
@@ -124,4 +122,20 @@ function readFilesRecursive({dir, include}: { dir: string, include: string[] }) 
   return result
 }
 
-export default series(initOutDir, parallel(tsc, build, outPkgJSON, outReadme))
+function getTsDiagnostics(program: ts.Program) {
+  return [
+    ...program.getDeclarationDiagnostics(),
+    ...program.getSemanticDiagnostics(),
+    ...program.getSyntacticDiagnostics()
+  ]
+}
+
+function forceCreateFile(filePath: string) {
+  if (!fs.pathExistsSync(filePath)) fs.createFileSync(filePath)
+  if (!fs.statSync(filePath).isFile()) {
+    fs.removeSync(filePath)
+    fs.createFileSync(filePath)
+  }
+}
+
+export default series(clean, parallel(tsc, build, outPkgJSON, outReadme))
