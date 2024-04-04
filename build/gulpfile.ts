@@ -11,18 +11,20 @@ import * as vueTsc from "vue-tsc"
 import ts          from "typescript"
 import consola     from "consola"
 
-const root = path.resolve(__dirname, "../")
-const outDir = "dist/packages"
-const entryDir = "packages"
+const ROOT = path.resolve(__dirname, "../")
+const OUT_DIR = "dist/packages"
+const ENTRY_DIR = "packages"
+const PKG_NAME = "null-carousel"
+const DEV_PKG_NAME = "@null-carousel"
 
 export async function clean() {
-  await fs.remove(path.resolve(root, outDir))
-  await fs.mkdirs(path.resolve(root, outDir))
+  await fs.remove(path.resolve(ROOT, OUT_DIR))
+  await fs.mkdirs(path.resolve(ROOT, OUT_DIR))
 }
 
 export async function tsc() {
   const options: ts.CompilerOptions = {
-    outDir: path.resolve(root, outDir),
+    outDir: path.resolve(ROOT, OUT_DIR),
     allowJs: true,
     declaration: true,
     incremental: true,
@@ -31,7 +33,7 @@ export async function tsc() {
   }
   const host = ts.createCompilerHost(options)
   const include = [".vue", ".ts", ".tsx"]
-  const dir = path.resolve(root, entryDir)
+  const dir = path.resolve(ROOT, ENTRY_DIR)
   const rootNames = readFilesRecursive({dir, include})
   const program = vueTsc.createProgram({rootNames, options, host})
   const diagnostics = getTsDiagnostics(program)
@@ -46,7 +48,7 @@ export async function tsc() {
     outputFiles.push(...files)
   }
   for (const outputFile of outputFiles) {
-    const content = outputFile.text.replaceAll("@null-carousel/packages", "null-carousel")
+    const content = outputFile.text.replaceAll(`${DEV_PKG_NAME}/packages`, PKG_NAME)
     forceCreateFile(outputFile.name)
     fs.writeFileSync(outputFile.name, content, "utf-8")
   }
@@ -54,16 +56,16 @@ export async function tsc() {
 
 export function build() {
   return vite({
-    root,
+    root: ROOT,
     plugins: [
       vue(),
     ],
     build: {
-      outDir,
+      outDir: OUT_DIR,
       emptyOutDir: false,
       lib: {
-        entry: ["packages"],
-        name: "null-carousel",
+        entry: [ENTRY_DIR],
+        name: PKG_NAME,
         formats: ["es"]
       },
       rollupOptions: {
@@ -78,9 +80,9 @@ export function build() {
 }
 
 export async function outPkgJSON() {
-  const rootPkg: Record<string, any> = fs.readJSONSync(path.resolve(root, "package.json"))
-  const packagesPkg: Record<string, any> = fs.readJSONSync(path.resolve(root, "packages", "package.json"))
-  const outputPath = path.resolve(root, outDir, "package.json")
+  const rootPkg: Record<string, any> = fs.readJSONSync(path.resolve(ROOT, "package.json"))
+  const packagesPkg: Record<string, any> = fs.readJSONSync(path.resolve(ROOT, "packages", "package.json"))
+  const outputPath = path.resolve(ROOT, OUT_DIR, "package.json")
   const finalPkg: Record<string, any> = {
     ...rootPkg,
     ...packagesPkg,
@@ -99,8 +101,8 @@ export async function outPkgJSON() {
 }
 
 export function outReadme() {
-  const src = path.resolve(root, "README.md")
-  const dest = path.resolve(root, outDir, "README.md")
+  const src = path.resolve(ROOT, "README.md")
+  const dest = path.resolve(ROOT, OUT_DIR, "README.md")
   return fs.copy(src, dest)
 }
 
