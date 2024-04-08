@@ -1,5 +1,7 @@
 import Carousel from "./carousel/index"
+import Test1    from "./test1/index"
 
 export {
-  Carousel
+  Carousel,
+  Test1,
 }

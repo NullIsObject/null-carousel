@@ -6,7 +6,8 @@ import {
 }                  from "vite"
 import path        from "path"
 import fs          from "fs-extra"
-import vue         from "@vitejs/plugin-vue"
+import viteVue     from "@vitejs/plugin-vue"
+import viteJSX     from "@vitejs/plugin-vue-jsx"
 import * as vueTsc from "vue-tsc"
 import ts          from "typescript"
 import consola     from "consola"
@@ -30,6 +31,8 @@ export async function tsc() {
     incremental: true,
     strict: true,
     emitDeclarationOnly: true,
+    jsx: ts.JsxEmit.Preserve,
+    jsxImportSource: "vue"
   }
   const host = ts.createCompilerHost(options)
   const include = [".vue", ".ts", ".tsx"]
@@ -58,7 +61,8 @@ export function build() {
   return vite({
     root: ROOT,
     plugins: [
-      vue(),
+      viteVue(),
+      viteJSX(),
     ],
     build: {
       outDir: OUT_DIR,
