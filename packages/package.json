@@ -4,6 +4,6 @@
   "main": "index",
   "module": "index",
   "peerDependencies": {
-    "vue": ">=2.7.0"
+    "vue": "^3.4.21"
   }
 }
