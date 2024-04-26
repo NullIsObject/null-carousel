@@ -1,4 +1,4 @@
-import {computed, reactive, readonly} from "vue"
+import {computed, ComputedRef, reactive, readonly} from "vue"
 
 function useCarousel<T>(dataList: T[]) {
   const state = reactive({
@@ -16,7 +16,9 @@ function useCarousel<T>(dataList: T[]) {
       state.index = result
     }
   })
-  const targetData = computed(() => readonly(state.dataList[index.value]))
+  const targetData = computed(() =>
+    state.dataList[index.value] instanceof Object ? readonly(state.dataList[index.value] as Object) : state.dataList[index.value]
+  ) as ComputedRef<T>
 
   function prev() {
     --index.value
