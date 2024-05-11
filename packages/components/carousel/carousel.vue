@@ -1,54 +1,38 @@
 <script setup lang="ts">
 import {
-  computed, unref
-} from "vue"
+  computed, CSSProperties, unref
+}                          from "vue"
+import useCarousel         from "./use-carousel"
+import createComponentName from "@null-carousel/packages/private-utils/create-component-name"
 
-const NAME = "null-carousel"
-
-defineOptions({
-  name: NAME
-})
-
-const directionMap = {
-  row: "row",
-  column: "column"
-}
+const NAME = createComponentName("carousel")
 
 const _props = defineProps<{
   width?: string,
   height?: string,
-  direction?: keyof typeof directionMap,
 }>()
 
 const props = computed(() => ({
   width: _props.width ?? "100%",
   height: _props.height ?? "100%",
-  direction: _props.direction ?? "row",
 }))
 
 const rootStyle = computed(() => {
-  const style = {
+  const style: CSSProperties = {
     width: unref(props).width,
     height: unref(props).height,
     overflow: "hidden",
-    flexDirection: "column",
   }
-  style.flexDirection = directionMap[unref(props).direction]
 
   return style
 })
+
+const {} = useCarousel()
 </script>
 <template>
   <div :class="[NAME]" :style="rootStyle">
-    <slot name="default"></slot>
+    <div style="position:relative;width: 100%;height: 100%;">
+      <slot name="default"></slot>
+    </div>
   </div>
 </template>
-<style>
-.null-carousel {
-  display: flex;
-}
-
-.null-carousel > * {
-  flex-shrink: 0;
-}
-</style>

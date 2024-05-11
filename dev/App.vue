@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {
   Carousel, CarouselItem
-}                 from "@null-carousel/packages"
+}                 from "@null-carousel/packages/index"
 import {reactive} from "vue"
 
 const state = reactive({

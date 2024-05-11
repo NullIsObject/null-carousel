@@ -1,22 +1,19 @@
 <script setup lang="ts">
-import {reactive} from "vue"
+import {reactive, CSSProperties} from "vue"
+import createComponentName from "@null-carousel/packages/private-utils/create-component-name"
 
-const NAME = "null-carousel-item"
+const NAME = createComponentName("carousel-item")
 
-defineOptions({
-  name: NAME
+const rootStyle = reactive<CSSProperties>({
+  width: "100%",
+  height: "100%",
+  position: "absolute",
+  left: 0,
+  top: 0,
 })
-
-const rootStyle = reactive({})
 </script>
 <template>
   <div :class="[NAME]" :style="rootStyle">
     <slot name="default"></slot>
   </div>
 </template>
-<style>
-.null-carousel-item {
-  width: 100%;
-  height: 100%;
-}
-</style>
