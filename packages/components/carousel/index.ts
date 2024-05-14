@@ -1,5 +1,5 @@
 import _Carousel     from "./carousel.vue"
-import _CarouselItem  from "./carousel-item.vue"
+import _CarouselItem from "./carousel-item.vue"
 import packComponent from "@null-carousel/packages/private-utils/pack-component"
 
 export const Carousel = packComponent("carousel", _Carousel)
