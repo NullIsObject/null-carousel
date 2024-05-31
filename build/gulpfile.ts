@@ -47,6 +47,16 @@ export async function tsc() {
   }
   const sourceFiles = program.getSourceFiles()
   const outputFiles: ts.OutputFile[] = []
+  // TODO
+  sourceFiles.forEach(sourceFile => {
+    ts.forEachChild(sourceFile, (node) => {
+      if (ts.isImportDeclaration(node) && isPathInsideDirectory(path.resolve(ROOT, ENTRY_DIR), node.getSourceFile().fileName)) {
+        console.log(node.getSourceFile().fileName)
+        console.log(node.getText())
+        console.log("///////////////")
+      }
+    })
+  })
   for (const sourceFile of sourceFiles) {
     const files = program.__vue.languageService.getEmitOutput(sourceFile.fileName, true).outputFiles
     outputFiles.push(...files)
@@ -143,6 +153,12 @@ function forceCreateFile(filePath: string) {
     fs.removeSync(filePath)
     fs.createFileSync(filePath)
   }
+}
+
+function isPathInsideDirectory(parentPath: string, childPath: string,) {
+  parentPath = path.resolve(parentPath)
+  childPath = path.resolve(childPath)
+  return childPath.startsWith(parentPath)
 }
 
 export const orderlyBuild = series(clean, tsc, build, outPkgJSON, outReadme)
