@@ -38,7 +38,7 @@ export async function tsc() {
   const host = ts.createCompilerHost(options)
   const include = [".vue", ".ts", ".tsx"]
   const dir = path.resolve(ROOT, ENTRY_DIR)
-  const rootNames = readFilesRecursive({dir, include})
+  const rootNames = await readFilesRecursive({dir, include})
   const program = vueTsc.createProgram({rootNames, options, host})
   const diagnostics = getTsDiagnostics(program)
   if (diagnostics.length) {
@@ -54,7 +54,7 @@ export async function tsc() {
   for (const outputFile of outputFiles) {
     const content = outputFile.text.replaceAll(DEV_PKG_NAME, PKG_NAME)
     forceCreateFile(outputFile.name)
-    fs.writeFileSync(outputFile.name, content, "utf-8")
+    await fs.writeFile(outputFile.name, content, "utf-8")
   }
 }
 
@@ -85,8 +85,8 @@ export function build() {
 }
 
 export async function outPkgJSON() {
-  const rootPkg: Record<string, any> = fs.readJSONSync(path.resolve(ROOT, "package.json"))
-  const packagesPkg: Record<string, any> = fs.readJSONSync(path.resolve(ROOT, "packages", "package.json"))
+  const rootPkg: Record<string, any> = await fs.readJSON(path.resolve(ROOT, "package.json"))
+  const packagesPkg: Record<string, any> = await fs.readJSON(path.resolve(ROOT, "packages", "package.json"))
   const outputPath = path.resolve(ROOT, OUT_DIR, "package.json")
   const finalPkg: Record<string, any> = {
     ...rootPkg,
@@ -102,7 +102,7 @@ export async function outPkgJSON() {
   finalPkg.packageManager = void 0
   finalPkg.scripts = void 0
   finalPkg.engines = void 0
-  fs.writeJSONSync(outputPath, finalPkg, {spaces: 2})
+  await fs.writeJSON(outputPath, finalPkg, {spaces: 2})
 }
 
 export function outReadme() {
@@ -111,16 +111,16 @@ export function outReadme() {
   return fs.copy(src, dest)
 }
 
-function readFilesRecursive({dir, include}: { dir: string, include: string[] }) {
+async function readFilesRecursive({dir, include}: { dir: string, include: string[] }) {
   const result: string[] = []
-
-  for (const file of fs.readdirSync(dir)) {
+  const files = await fs.readdir(dir)
+  for (const file of files) {
     const filepath = path.join(dir, file)
-    const stat = fs.statSync(filepath)
+    const stat = await fs.stat(filepath)
     const isInclude = include.some(fileSuffix => file.endsWith(fileSuffix))
     if (stat.isFile() && !isInclude || file === "node_modules") continue
     if (stat.isDirectory()) {
-      result.push(...readFilesRecursive({dir: filepath, include}))
+      result.push(...await readFilesRecursive({dir: filepath, include}))
     } else {
       result.push(filepath)
     }
@@ -144,5 +144,7 @@ function forceCreateFile(filePath: string) {
     fs.createFileSync(filePath)
   }
 }
+
+export const orderlyBuild = series(clean, tsc, build, outPkgJSON, outReadme)
 
 export default series(clean, parallel(tsc, build, outPkgJSON, outReadme))

@@ -6,6 +6,7 @@
   "module": "index.ts",
   "scripts": {
     "build:packages": "gulp --require @esbuild-kit/cjs-loader -f gulpfile.ts",
+    "build:packages_orderlyBuild": "pnpm run build:packages orderlyBuild",
     "build:packages_clean": "pnpm run build:packages clean",
     "build:packages_tsc": "pnpm run build:packages tsc",
     "build:packages_build": "pnpm run build:packages build",
