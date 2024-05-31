@@ -27,7 +27,6 @@
     "@null-carousel/build": "workspace:*",
     "@null-carousel/packages": "workspace:*",
     "@null-carousel/root": "workspace:./",
-    "null-carousel": "workspace:./dist/packages",
     "vue": "^3.4.23"
   }
 }

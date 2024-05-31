@@ -1,4 +1,4 @@
-import {Carousel, CarouselItem} from "./carousel/index"
+import {Carousel, CarouselItem} from "./carousel"
 
 export {
   Carousel,

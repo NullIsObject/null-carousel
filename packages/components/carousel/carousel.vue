@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import {
   computed, CSSProperties, unref
-}                          from "vue"
-import useCarousel         from "./use-carousel"
-import createComponentName from "@null-carousel/packages/private-utils/create-component-name"
+}                  from "vue"
+import useCarousel from "./use-carousel"
+import {PREFIX}    from "@null-carousel/packages/private-utils/config"
 
-const NAME = createComponentName("carousel")
+const ROOT_CLASS_NAME = `${PREFIX}__carousel`
+defineOptions({
+  name: `${PREFIX}-carousel`,
+})
 
 const _props = defineProps<{
   width?: string,
@@ -30,7 +33,7 @@ const rootStyle = computed(() => {
 const {} = useCarousel()
 </script>
 <template>
-  <div :class="[NAME]" :style="rootStyle">
+  <div :class="[ROOT_CLASS_NAME]" :style="rootStyle">
     <div style="position:relative;width: 100%;height: 100%;">
       <slot name="default"></slot>
     </div>
