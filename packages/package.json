@@ -1,9 +1,12 @@
 {
-  "name": "@null-carousel/packages",
+  "name": "null-carousel",
   "type": "module",
   "main": "index",
   "module": "index",
   "peerDependencies": {
     "vue": "^3.4.23"
+  },
+  "devDependencies": {
+    "null-carousel": "./"
   }
 }

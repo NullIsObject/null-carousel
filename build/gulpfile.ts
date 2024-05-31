@@ -16,7 +16,8 @@ const ROOT = path.resolve(__dirname, "../")
 const OUT_DIR = "dist/packages"
 const ENTRY_DIR = "packages"
 const PKG_NAME = "null-carousel"
-const DEV_PKG_NAME = "@null-carousel"
+// const DEV_PKG_NAME = "@null-carousel/packages"
+const DEV_PKG_NAME = "null-carousel"
 
 export async function clean() {
   await fs.remove(path.resolve(ROOT, OUT_DIR))
@@ -51,7 +52,7 @@ export async function tsc() {
     outputFiles.push(...files)
   }
   for (const outputFile of outputFiles) {
-    const content = outputFile.text.replaceAll(`${DEV_PKG_NAME}/packages`, PKG_NAME)
+    const content = outputFile.text.replaceAll(DEV_PKG_NAME, PKG_NAME)
     forceCreateFile(outputFile.name)
     fs.writeFileSync(outputFile.name, content, "utf-8")
   }
@@ -96,8 +97,8 @@ export async function outPkgJSON() {
   }
   finalPkg.name = rootPkg.name
   finalPkg.dependencies = packagesPkg.dependencies
-  finalPkg.devDependencies = packagesPkg.devDependencies
   finalPkg.peerDependencies = packagesPkg.peerDependencies
+  finalPkg.devDependencies = void 0
   finalPkg.packageManager = void 0
   finalPkg.scripts = void 0
   finalPkg.engines = void 0

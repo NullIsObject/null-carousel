@@ -2,7 +2,7 @@
 import {
   reactive, CSSProperties
 }               from "vue"
-import {PREFIX} from "@null-carousel/packages/private-utils/config"
+import {PREFIX} from "null-carousel/private-utils/config"
 
 const ROOT_CLASS_NAME = `${PREFIX}-carousel`
 defineOptions({

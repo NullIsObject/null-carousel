@@ -1,6 +1,6 @@
-import useCarousel from "@null-carousel/packages/utils/use-carousel"
+import useCarousel from "null-carousel/utils/use-carousel"
 
-export * from "@null-carousel/packages/components/index"
+export * from "null-carousel/components/index"
 export {
   useCarousel
 }

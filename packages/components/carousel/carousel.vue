@@ -3,7 +3,7 @@ import {
   computed, CSSProperties, unref
 }                  from "vue"
 import useCarousel from "./use-carousel"
-import {PREFIX}    from "@null-carousel/packages/private-utils/config"
+import {PREFIX}    from "null-carousel/private-utils/config"
 
 const ROOT_CLASS_NAME = `${PREFIX}__carousel`
 defineOptions({
