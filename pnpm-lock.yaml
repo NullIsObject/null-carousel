@@ -63,8 +63,11 @@ importers:
         specifier: ^1.8.27
         version: 1.8.27(typescript@5.3.3)
 
-  dev:
+  packages/dev:
     devDependencies:
+      '@null-carousel/dev':
+        specifier: workspace:*
+        version: 'link:'
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
         version: 5.0.4(vite@5.1.4(@types/node@20.11.24))(vue@3.4.23(typescript@5.3.3))
