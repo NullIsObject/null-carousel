@@ -13,8 +13,8 @@ import ts          from "typescript"
 import consola     from "consola"
 
 const ROOT = path.resolve(__dirname, "../")
-const OUT_DIR = "dist/packages"
-const ENTRY_DIR = "packages"
+const OUT_DIR = "dist/packages/null-carousel"
+const ENTRY_DIR = "packages/null-carousel"
 const PKG_NAME = "null-carousel"
 // const DEV_PKG_NAME = "@null-carousel/packages"
 const DEV_PKG_NAME = "null-carousel"
@@ -86,7 +86,7 @@ export function build() {
 
 export async function outPkgJSON() {
   const rootPkg: Record<string, any> = await fs.readJSON(path.resolve(ROOT, "package.json"))
-  const packagesPkg: Record<string, any> = await fs.readJSON(path.resolve(ROOT, "packages", "package.json"))
+  const packagesPkg: Record<string, any> = await fs.readJSON(path.resolve(ROOT, ENTRY_DIR, "package.json"))
   const outputPath = path.resolve(ROOT, OUT_DIR, "package.json")
   const finalPkg: Record<string, any> = {
     ...rootPkg,

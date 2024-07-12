@@ -8,6 +8,7 @@
   "license": "MIT",
   "scripts": {
     "build": "pnpm run -C build build:packages",
+    "orderlyBuild": "pnpm run -C build build:packages_orderlyBuild",
     "dev": "pnpm run -C dev start"
   },
   "repository": {
