@@ -18,19 +18,25 @@ jobs:
       - name: Zip project
         run: |
           zip -r null-carousel.zip ./dist/packages/null-carousel
+      - name: Extract Branch Name
+        id: extract_branch
+        run: |  
+          echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref.name }}
-          release_name: Release ${{ github.ref.name }}
+          tag_name: ${{ steps.extract_branch.outputs.branch }}
+          release_name: Release ${{ steps.extract_branch.outputs.branch }}
           draft: false
           prerelease: false
+
       - name: test
         run: |
           tree ./
+
       - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
