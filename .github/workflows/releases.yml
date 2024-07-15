@@ -1,7 +1,7 @@
 name: GitHub Actions Build
 on:
   push:
-    branches:
+    tags:
       - master
 jobs:
   build:
