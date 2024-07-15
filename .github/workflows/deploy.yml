@@ -1,23 +1,23 @@
-#name: GitHub Actions Build and Deploy
-#on:
-#  push:
-#    branches:
-#      - master
-#jobs:
-#  build-and-deploy:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Setup Node.js
-#        uses: actions/setup-node@v4
-#        with:
-#          node-version: 20
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#      - name: Install and Build
-#        run: |
-#          npm i -g pnpm
-#          pnpm i
-#          pnpm run orderlyBuild
+name: GitHub Actions Build and Deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install and Build
+        run: |
+          npm i -g pnpm
+          pnpm i
+          pnpm run orderlyBuild
 #      - name: Deploy
 #        uses: JamesIves/github-pages-deploy-action@releases/v3
 #        with:
