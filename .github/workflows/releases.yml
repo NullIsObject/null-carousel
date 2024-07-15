@@ -17,7 +17,7 @@ jobs:
           pnpm run orderlyBuild
       - name: Zip project
         run: |
-          zip -r null-carousel.zip ./dist/packages/null-carousel
+          zip -r null-carousel.zip dist/packages/null-carousel
       - name: Extract Branch Name
         id: extract_branch
         run: |  
@@ -28,7 +28,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: tag-${{ steps.extract_branch.outputs.branch }}
+          tag_name: ${{ steps.extract_branch.outputs.branch }}
           release_name: Release ${{ steps.extract_branch.outputs.branch }}
           draft: false
           prerelease: false
