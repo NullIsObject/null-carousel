@@ -18,7 +18,7 @@ jobs:
       - name: Zip project
         run: |
           cd ./dist/packages
-          zip -r null-carousel.zip null-carousel/
+          zip -r null-carousel.zip null-carousel/*
           cd ../../
       - name: Extract Branch Name
         id: extract_branch
