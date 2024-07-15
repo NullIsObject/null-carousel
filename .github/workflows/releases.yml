@@ -17,7 +17,7 @@ jobs:
           pnpm run orderlyBuild
       - name: Zip project
         run: |
-          zip ./dist/packages/null-carousel
+          zip -r ./dist/packages/null-carousel
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
