@@ -17,7 +17,7 @@ jobs:
           pnpm run orderlyBuild
       - name: Zip project
         run: |
-          zip -r null-carousel.zip dist/packages/null-carousel
+          zip -r null-carousel.zip dist/packages/null-carousel/
       - name: Extract Branch Name
         id: extract_branch
         run: |  
