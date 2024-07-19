@@ -40,7 +40,7 @@ jobs:
 
       - name: Show Tree
         run: |
-          tree ./
+          tree
 
       - name: Upload Release Asset
         id: upload-release-asset

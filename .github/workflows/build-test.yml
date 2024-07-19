@@ -11,16 +11,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Install and Build
         run: |
-          npm i -g pnpm
           pnpm i
           pnpm run orderlyBuild
-#      - name: Deploy
-#        uses: JamesIves/github-pages-deploy-action@releases/v3
-#        with:
-#          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-#          BRANCH: deploy
-#          FOLDER: dist
+
+      - name: Show Tree
+        run: |
+          tree
