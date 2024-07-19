@@ -1,8 +1,11 @@
 name: GitHub Actions Release
 on:
-  push:
-    tags:
-      - *
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Test scenario tags'
+        required: false
+        type: string
 jobs:
   build:
     name: Upload Release Asset

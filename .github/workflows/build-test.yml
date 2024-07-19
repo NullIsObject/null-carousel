@@ -1,4 +1,4 @@
-name: GitHub Actions Build and Deploy
+name: GitHub Actions Build Test
 on:
   push:
     branches:
