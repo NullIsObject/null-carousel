@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {
-  computed, CSSProperties, unref
+  computed, CSSProperties
 }                  from "vue"
 import useCarousel from "./use-carousel"
 import {PREFIX}    from "null-carousel/private-utils/config"
@@ -10,20 +10,20 @@ defineOptions({
   name: `${PREFIX}-carousel`,
 })
 
-const _props = defineProps<{
+interface Props{
   width?: string,
   height?: string,
-}>()
+}
 
-const props = computed(() => ({
-  width: _props.width ?? "100%",
-  height: _props.height ?? "100%",
-}))
+const props = withDefaults<Props>(defineProps<Props>(), {
+  width: "100%",
+  height: "100%"
+}) as Required<Props>
 
 const rootStyle = computed(() => {
   const style: CSSProperties = {
-    width: unref(props).width,
-    height: unref(props).height,
+    width: props.width,
+    height: props.height,
     overflow: "hidden",
   }
 

@@ -4,7 +4,7 @@ import {
 }               from "vue"
 import {PREFIX} from "null-carousel/private-utils/config"
 
-const ROOT_CLASS_NAME = `${PREFIX}-carousel`
+const ROOT_CLASS_NAME = `${PREFIX}__carousel`
 defineOptions({
   name: `${PREFIX}-carousel`,
 })
