@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import {
-  reactive, CSSProperties
-}               from "vue"
+import {reactive, CSSProperties} from "vue"
 import {PREFIX} from "null-carousel/private-utils/config"
 
-const ROOT_CLASS_NAME = `${PREFIX}__carousel`
+const ROOT_CLASS_NAME = `${PREFIX}__carousel-item`
 defineOptions({
-  name: `${PREFIX}-carousel`,
+  name: `${PREFIX}-carousel-item`,
 })
 
 const rootStyle = reactive<CSSProperties>({

@@ -15,15 +15,15 @@ interface Props{
   height?: string,
 }
 
-const props = withDefaults<Props>(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   width: "100%",
   height: "100%"
-}) as Required<Props>
+})
 
 const rootStyle = computed(() => {
   const style: CSSProperties = {
-    width: props.width,
-    height: props.height,
+    width: props.width || "",
+    height: props.height || "",
     overflow: "hidden",
   }
 
