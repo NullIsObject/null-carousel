@@ -58,13 +58,29 @@ export async function tsc() {
   }
 }
 
-export function build() {
+export async function build() {
   return vite({
     root: ROOT,
     plugins: [
       viteVue(),
       viteJSX(),
     ],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData(content: string, path: string) {
+            const scssVar: Record<string, string> = {
+              "$prefix": DEV_PKG_NAME,
+            }
+            let scssVarStr = ""
+            for (const key in scssVar) {
+              scssVarStr += `${key}: ${scssVar[key]};`
+            }
+            return `${scssVarStr}${content}`
+          },
+        }
+      }
+    },
     build: {
       outDir: OUT_DIR,
       emptyOutDir: false,
