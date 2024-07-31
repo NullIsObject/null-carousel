@@ -53,6 +53,9 @@ importers:
       jiti:
         specifier: ^1.21.0
         version: 1.21.0
+      sass:
+        specifier: ^1.77.8
+        version: 1.77.8
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
@@ -3608,8 +3611,7 @@ snapshots:
   image-size@0.5.5:
     optional: true
 
-  immutable@4.3.7:
-    optional: true
+  immutable@4.3.7: {}
 
   inflight@1.0.6:
     dependencies:
@@ -4204,7 +4206,6 @@ snapshots:
       chokidar: 3.6.0
       immutable: 4.3.7
       source-map-js: 1.2.0
-    optional: true
 
   sax@1.4.1:
     optional: true
