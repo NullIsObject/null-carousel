@@ -18,9 +18,12 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
 
-      - name: Install and Build
+      - name: Install The Dependencies
         run: |
           pnpm i
+
+      - name: Build
+        run: |
           pnpm run orderlyBuild
 
       - name: Show Tree

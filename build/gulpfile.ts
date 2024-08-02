@@ -1,16 +1,14 @@
 import {
   series, parallel
-}                  from "gulp"
-import {
-  build as vite
-}                  from "vite"
-import path        from "path"
-import fs          from "fs-extra"
-import viteVue     from "@vitejs/plugin-vue"
-import viteJSX     from "@vitejs/plugin-vue-jsx"
+} from "gulp"
+import vite from "vite"
+import path from "path"
+import fs from "fs-extra"
+import viteVue from "@vitejs/plugin-vue"
+import viteJSX from "@vitejs/plugin-vue-jsx"
 import * as vueTsc from "vue-tsc"
-import ts          from "typescript"
-import consola     from "consola"
+import ts from "typescript"
+import consola from "consola"
 
 const ROOT = path.resolve(__dirname, "../")
 const OUT_DIR = "dist/packages/null-carousel"
@@ -18,6 +16,7 @@ const ENTRY_DIR = "packages/null-carousel"
 const PKG_NAME = "null-carousel"
 // const DEV_PKG_NAME = "@null-carousel/packages"
 const DEV_PKG_NAME = "null-carousel"
+const STYLE_DIR = "styles"
 
 export async function clean() {
   await fs.remove(path.resolve(ROOT, OUT_DIR))
@@ -59,45 +58,66 @@ export async function tsc() {
 }
 
 export async function build() {
-  return vite({
-    root: ROOT,
-    plugins: [
-      viteVue(),
-      viteJSX(),
-    ],
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData(content: string, path: string) {
-            const scssVar: Record<string, string> = {
-              "$prefix": DEV_PKG_NAME,
-            }
-            let scssVarStr = ""
-            for (const key in scssVar) {
-              scssVarStr += `${key}: ${scssVar[key]};`
-            }
-            return `${scssVarStr}${content}`
+  const write = false
+  return vite
+    .build({
+      root: ROOT,
+      plugins: [
+        viteVue(),
+        viteJSX(),
+      ],
+      css: {
+        preprocessorOptions: {
+          scss: {
+            additionalData(content: string, path: string) {
+              const scssVar: Record<string, string> = {
+                "$prefix": DEV_PKG_NAME,
+              }
+              let scssVarStr = ""
+              for (const key in scssVar) {
+                scssVarStr += `${key}: ${scssVar[key]};`
+              }
+              return `${scssVarStr}${content}`
+            },
+          }
+        }
+      },
+      build: {
+        write,
+        outDir: OUT_DIR,
+        emptyOutDir: false,
+        lib: {
+          entry: [ENTRY_DIR],
+          name: PKG_NAME,
+          formats: ["es"]
+        },
+        rollupOptions: {
+          external: ["vue"],
+          output: {
+            preserveModules: true,
+            format: "module",
           },
+        },
+      }
+    })
+    .then(result => {
+      if (write) return
+      const outDir = path.resolve(ROOT, OUT_DIR)
+      const writePendingList: Promise<any>[] = []
+      const resultList = Array.isArray(result) ? result : [result as vite.Rollup.RollupOutput]
+      for (const result of resultList) {
+        for (const file of result.output) {
+          let outputPath = path.resolve(outDir, file.fileName)
+          if (file.fileName.endsWith(".css")) {
+            outputPath = path.resolve(outDir, STYLE_DIR, file.fileName)
+          }
+          const content = (file as vite.Rollup.OutputChunk).code || (file as vite.Rollup.OutputAsset).source
+          forceCreateFile(outputPath)
+          writePendingList.push(fs.writeFile(outputPath, content, "utf-8"))
         }
       }
-    },
-    build: {
-      outDir: OUT_DIR,
-      emptyOutDir: false,
-      lib: {
-        entry: [ENTRY_DIR],
-        name: PKG_NAME,
-        formats: ["es"]
-      },
-      rollupOptions: {
-        external: ["vue"],
-        output: {
-          preserveModules: true,
-          format: "module",
-        },
-      },
-    }
-  })
+      return Promise.all([writePendingList])
+    })
 }
 
 export async function outPkgJSON() {
@@ -145,6 +165,10 @@ async function readFilesRecursive({dir, include}: { dir: string, include: string
   return result
 }
 
+export const orderlyBuild = series(clean, tsc, build, outPkgJSON, outReadme)
+
+export default series(clean, parallel(tsc, build, outPkgJSON, outReadme))
+
 function getTsDiagnostics(program: ts.Program) {
   return [
     ...program.getDeclarationDiagnostics(),
@@ -160,7 +184,3 @@ function forceCreateFile(filePath: string) {
     fs.createFileSync(filePath)
   }
 }
-
-export const orderlyBuild = series(clean, tsc, build, outPkgJSON, outReadme)
-
-export default series(clean, parallel(tsc, build, outPkgJSON, outReadme))
