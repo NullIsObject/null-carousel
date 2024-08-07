@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import {
-  computed, CSSProperties
-}                  from "vue"
+import {computed, CSSProperties} from "vue"
 import useCarousel from "./use-carousel"
-import {PREFIX}    from "null-carousel/private-utils/config"
+import {BEM} from "null-carousel/private-utils/bem"
 
-const ROOT_CLASS_NAME = `${PREFIX}__carousel`
+const componentName = "carousel"
+const bem = new BEM(componentName)
+const ROOT_CLASS_NAME = bem.bem()
 defineOptions({
-  name: `${PREFIX}-carousel`,
+  name: componentName,
 })
 
-interface Props{
+interface Props {
   width?: string,
   height?: string,
 }

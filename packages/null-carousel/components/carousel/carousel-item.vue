@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import {PREFIX} from "null-carousel/private-utils/config"
+import {BEM} from "null-carousel/private-utils/bem"
 
-const ROOT_CLASS_NAME = `${PREFIX}__carousel-item`
+const componentName = "carousel-item"
+const bem = new BEM(componentName)
+const ROOT_CLASS_NAME = bem.bem()
 defineOptions({
-  name: `${PREFIX}-carousel-item`,
+  name: componentName,
 })
 </script>
 <template>
@@ -12,7 +14,7 @@ defineOptions({
   </div>
 </template>
 <style lang="scss">
-.#{$prefix}__carousel-item {
+.#{$prefix}-carousel-item {
   width: 100%;
   height: 100%;
   position: absolute;

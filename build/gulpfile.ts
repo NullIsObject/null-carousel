@@ -1,6 +1,4 @@
-import {
-  series, parallel
-} from "gulp"
+import {series, parallel} from "gulp"
 import vite from "vite"
 import path from "path"
 import fs from "fs-extra"
@@ -103,7 +101,7 @@ export async function build() {
     .then(result => {
       if (write) return
       const outDir = path.resolve(ROOT, OUT_DIR)
-      const writePendingList: Promise<any>[] = []
+      const writingList: Promise<ReturnType<typeof fs.writeFile>>[] = []
       const resultList = Array.isArray(result) ? result : [result as vite.Rollup.RollupOutput]
       for (const result of resultList) {
         for (const file of result.output) {
@@ -113,10 +111,10 @@ export async function build() {
           }
           const content = (file as vite.Rollup.OutputChunk).code || (file as vite.Rollup.OutputAsset).source
           forceCreateFile(outputPath)
-          writePendingList.push(fs.writeFile(outputPath, content, "utf-8"))
+          writingList.push(fs.writeFile(outputPath, content, "utf-8"))
         }
       }
-      return Promise.all([writePendingList])
+      return Promise.all([writingList])
     })
 }
 
