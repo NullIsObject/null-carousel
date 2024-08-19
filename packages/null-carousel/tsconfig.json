@@ -6,7 +6,7 @@
     "./**/*.vue"
   ],
   "compilerOptions": {
-    "module": "ES6",
+    "module": "ESNext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,

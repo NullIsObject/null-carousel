@@ -44,6 +44,9 @@ importers:
       consola:
         specifier: ^3.2.3
         version: 3.2.3
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       fs-extra:
         specifier: ^11.2.0
         version: 11.2.0
@@ -87,6 +90,9 @@ importers:
       null-carousel:
         specifier: ./
         version: 'link:'
+      vite:
+        specifier: ^5.1.4
+        version: 5.1.4(@types/node@20.11.24)(less@4.2.0)(sass@1.77.8)
 
 packages:
 
@@ -1036,6 +1042,10 @@ packages:
   detect-file@1.0.0:
     resolution: {integrity: sha512-DtCOLG98P007x7wiiOmfI0fi3eIKyWiLTGJ2MDnVi/E04lWGbf+JzrRHMm0rgIIZJGtHpKpbVgLWHrv8xXpc3Q==}
     engines: {node: '>=0.10.0'}
+
+  dotenv@16.4.5:
+    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
+    engines: {node: '>=12'}
 
   duplexify@3.7.1:
     resolution: {integrity: sha512-07z8uv2wMyS51kKhD1KsdXJg5WQ6t93RneqRxUHnskXVtlYYkLqM0gqStQZ3pj073g687jPCHrqNfCzawLYh5g==}
@@ -3168,6 +3178,8 @@ snapshots:
       isobject: 3.0.1
 
   detect-file@1.0.0: {}
+
+  dotenv@16.4.5: {}
 
   duplexify@3.7.1:
     dependencies:

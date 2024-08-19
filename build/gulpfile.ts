@@ -7,6 +7,7 @@ import viteJSX from "@vitejs/plugin-vue-jsx"
 import * as vueTsc from "vue-tsc"
 import ts from "typescript"
 import consola from "consola"
+import dotenv from "dotenv"
 
 const ROOT = path.resolve(__dirname, "../")
 const OUT_DIR = "dist/packages/null-carousel"
@@ -30,7 +31,10 @@ export async function tsc() {
     strict: true,
     emitDeclarationOnly: true,
     jsx: ts.JsxEmit.Preserve,
-    jsxImportSource: "vue"
+    jsxImportSource: "vue",
+    module: ts.ModuleKind.ESNext,
+    esModuleInterop: true,
+    moduleResolution: ts.ModuleResolutionKind.Bundler,
   }
   const host = ts.createCompilerHost(options)
   const include = [".vue", ".ts", ".tsx"]
@@ -60,6 +64,7 @@ export async function build() {
   return vite
     .build({
       root: ROOT,
+      envDir: "./",
       plugins: [
         viteVue(),
         viteJSX(),
@@ -68,12 +73,12 @@ export async function build() {
         preprocessorOptions: {
           scss: {
             additionalData(content: string, path: string) {
-              const scssVar: Record<string, string> = {
-                "$prefix": DEV_PKG_NAME,
-              }
+              const envConfig = getEnvConfig()
               let scssVarStr = ""
-              for (const key in scssVar) {
-                scssVarStr += `${key}: ${scssVar[key]};`
+              for (const key in envConfig) {
+                const value = envConfig[key]
+                if (typeof value !== "string") continue
+                scssVarStr += `$${key.toLowerCase()}: ${value};`
               }
               return `${scssVarStr}${content}`
             },
@@ -181,4 +186,8 @@ function forceCreateFile(filePath: string) {
     fs.removeSync(filePath)
     fs.createFileSync(filePath)
   }
+}
+
+function getEnvConfig(): Record<string, any> {
+  return dotenv.config({path: path.resolve(ROOT, "./.env")}).parsed || {}
 }

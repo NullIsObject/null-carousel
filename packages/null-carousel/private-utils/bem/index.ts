@@ -13,9 +13,21 @@ export class BEM {
   bem(element: string): string
   bem(): string
   bem(...args: string[]) {
-    const b = args.length >= 3 ? args[0] : ""
-    const e = args.length <= 2 ? args[0] : ""
-    const m = args.length === 2 ? args[1] : ""
+    let b = ""
+    let e = ""
+    let m = ""
+    if (args.length >= 3) {
+      b = args[0]
+      e = args[1]
+      m = args[2]
+    }
+    if (args.length === 2) {
+      e = args[0]
+      m = args[1]
+    }
+    if (args.length === 1) {
+      e = args[0]
+    }
     let result = `${PREFIX}-${this.componentName}`
     if (b) result += `-${b}`
     if (e) result += `__${e}`

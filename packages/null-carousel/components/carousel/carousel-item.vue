@@ -14,7 +14,9 @@ defineOptions({
   </div>
 </template>
 <style lang="scss">
-.#{$prefix}-carousel-item {
+@use "null-carousel/private-utils/bem" as *;
+
+@include bem("carousel-item") {
   width: 100%;
   height: 100%;
   position: absolute;
