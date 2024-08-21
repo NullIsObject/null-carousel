@@ -5,7 +5,7 @@ import fs from "fs-extra"
 import viteVue from "@vitejs/plugin-vue"
 import viteJSX from "@vitejs/plugin-vue-jsx"
 import * as vueTsc from "vue-tsc"
-import ts from "typescript"
+import ts, {ImportAttribute} from "typescript"
 import consola from "consola"
 import dotenv from "dotenv"
 
@@ -35,19 +35,102 @@ export async function tsc() {
     module: ts.ModuleKind.ESNext,
     esModuleInterop: true,
     moduleResolution: ts.ModuleResolutionKind.Bundler,
+    // configFilePath: "./tsconfig.json"
   }
   const host = ts.createCompilerHost(options)
   const include = [".vue", ".ts", ".tsx"]
   const dir = path.resolve(ROOT, ENTRY_DIR)
   const rootNames = await readFilesRecursive({dir, include})
   const program = vueTsc.createProgram({rootNames, options, host})
-  const diagnostics = getTsDiagnostics(program)
-  if (diagnostics.length) {
-    consola.error(ts.formatDiagnosticsWithColorAndContext(diagnostics, host))
-    return
+  {
+    const diagnostics = getTsDiagnostics(program)
+    if (diagnostics.length) {
+      consola.error(ts.formatDiagnosticsWithColorAndContext(diagnostics, host))
+      return
+    }
   }
   const sourceFiles = program.getSourceFiles()
   const outputFiles: ts.OutputFile[] = []
+  // sourceFiles.forEach(sourceFile => {
+  //   ts.visitNode(sourceFile, node => {
+  //     if (!isPathInsideDirectory(path.resolve(ROOT, ENTRY_DIR), node.getSourceFile().fileName)) {
+  //       return node
+  //     }
+  //
+  //     return undefined
+  //     console.log(node.kind)
+  //     if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node) || ts.isStringLiteral(node)) {
+  //       console.log("/////////////////")
+  //       console.log((node as ts.SourceFile).getText())
+  //     }
+  //
+  //     // if (ts.isImportAttribute(node) || ts.isImportTypeNode(node) ||
+  //     //   // 节点
+  //     //   ts.isImportDeclaration(node) || ts.isExportDeclaration(node) ||
+  //     //   // 叶子节点
+  //     //   ts.isStringLiteral(node)
+  //     // ) {
+  //     //   console.log("/////////////////////////////")
+  //     //   console.log((node as ts.SourceFile).text)
+  //     // }
+  //
+  //     return node
+  //     // const oldText = node.getText()
+  //     // const newText = oldText.replaceAll(DEV_PKG_NAME, "aaaaaaaaaaaaaaaaaaaa")
+  //
+  //     // ts.factory.updateImportAttribute()
+  //
+  //     // try {
+  //     //   return node.update(newText, ts.createTextChangeRange(ts.createTextSpan(0, oldText.length), newText.length))
+  //     // } catch {
+  //     //   console.log(node.fileName)
+  //     //   return node
+  //     // }
+  //     // return node.update(newText, ts.createTextChangeRange(ts.createTextSpan(0, oldText.length), newText.length))
+  //   })
+  // })
+
+  // // TODO
+  // sourceFiles.forEach(sourceFile => {
+  //   const nodeList: ts.Node[] = []
+  //   if (isPathInsideDirectory(path.resolve(ROOT, ENTRY_DIR), sourceFile.getSourceFile().fileName)) {
+  //     nodeList.push(...expandTheTsNode(sourceFile))
+  //   }
+  //   for (const node of nodeList) {
+  //     if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
+  //       node.forEachChild(node => {
+  //         if (ts.isStringLiteral(node)) {
+  //           ts.factory.createStringLiteral("test")
+  //           node._updateExpressionBrand
+  //           console.log(node.getText())
+  //         }
+  //       })
+  //     }
+  //   }
+  // })
+  sourceFiles
+    .filter(sourceFile => isPathInsideDirectory(path.resolve(ROOT, ENTRY_DIR), sourceFile.fileName))
+    .forEach(sourceFile => {
+      // TODO 一次循环代表一个文件
+      // 将visitNode作为一颗新的树输出
+      // 参考test.ts
+      ts.visitNode(sourceFile, node => {
+        return ts.visitNode(node, node => {
+          console.log(node.kind)
+          if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
+            ts.visitNode(node, node => {
+              if (ts.isStringLiteral(node)) {
+                return ts.factory.createStringLiteral("test")
+              }
+              return node
+            })
+          }
+          return node
+        })
+      })
+    })
+
+
   for (const sourceFile of sourceFiles) {
     const files = program.__vue.languageService.getEmitOutput(sourceFile.fileName, true).outputFiles
     outputFiles.push(...files)
@@ -186,6 +269,23 @@ function forceCreateFile(filePath: string) {
     fs.removeSync(filePath)
     fs.createFileSync(filePath)
   }
+}
+
+function isPathInsideDirectory(parentPath: string, childPath: string,) {
+  parentPath = path.resolve(parentPath)
+  childPath = path.resolve(childPath)
+  return childPath.startsWith(parentPath)
+}
+
+function expandTheTsNode(node: ts.Node) {
+  const result = [node]
+  ts.forEachChild(node, node => {
+    result.push(node)
+    if (!ts.isIdentifier(node)) {
+      result.push(...expandTheTsNode(node))
+    }
+  })
+  return result
 }
 
 function getEnvConfig(): Record<string, any> {
