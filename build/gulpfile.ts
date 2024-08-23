@@ -5,7 +5,7 @@ import fs from "fs-extra"
 import viteVue from "@vitejs/plugin-vue"
 import viteJSX from "@vitejs/plugin-vue-jsx"
 import * as vueTsc from "vue-tsc"
-import ts, {ImportAttribute} from "typescript"
+import ts from "typescript"
 import consola from "consola"
 import dotenv from "dotenv"
 
@@ -49,97 +49,18 @@ export async function tsc() {
       return
     }
   }
-  const sourceFiles = program.getSourceFiles()
-  const outputFiles: ts.OutputFile[] = []
-  // sourceFiles.forEach(sourceFile => {
-  //   ts.visitNode(sourceFile, node => {
-  //     if (!isPathInsideDirectory(path.resolve(ROOT, ENTRY_DIR), node.getSourceFile().fileName)) {
-  //       return node
-  //     }
-  //
-  //     return undefined
-  //     console.log(node.kind)
-  //     if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node) || ts.isStringLiteral(node)) {
-  //       console.log("/////////////////")
-  //       console.log((node as ts.SourceFile).getText())
-  //     }
-  //
-  //     // if (ts.isImportAttribute(node) || ts.isImportTypeNode(node) ||
-  //     //   // 节点
-  //     //   ts.isImportDeclaration(node) || ts.isExportDeclaration(node) ||
-  //     //   // 叶子节点
-  //     //   ts.isStringLiteral(node)
-  //     // ) {
-  //     //   console.log("/////////////////////////////")
-  //     //   console.log((node as ts.SourceFile).text)
-  //     // }
-  //
-  //     return node
-  //     // const oldText = node.getText()
-  //     // const newText = oldText.replaceAll(DEV_PKG_NAME, "aaaaaaaaaaaaaaaaaaaa")
-  //
-  //     // ts.factory.updateImportAttribute()
-  //
-  //     // try {
-  //     //   return node.update(newText, ts.createTextChangeRange(ts.createTextSpan(0, oldText.length), newText.length))
-  //     // } catch {
-  //     //   console.log(node.fileName)
-  //     //   return node
-  //     // }
-  //     // return node.update(newText, ts.createTextChangeRange(ts.createTextSpan(0, oldText.length), newText.length))
-  //   })
-  // })
-
-  // // TODO
-  // sourceFiles.forEach(sourceFile => {
-  //   const nodeList: ts.Node[] = []
-  //   if (isPathInsideDirectory(path.resolve(ROOT, ENTRY_DIR), sourceFile.getSourceFile().fileName)) {
-  //     nodeList.push(...expandTheTsNode(sourceFile))
-  //   }
-  //   for (const node of nodeList) {
-  //     if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
-  //       node.forEachChild(node => {
-  //         if (ts.isStringLiteral(node)) {
-  //           ts.factory.createStringLiteral("test")
-  //           node._updateExpressionBrand
-  //           console.log(node.getText())
-  //         }
-  //       })
-  //     }
-  //   }
-  // })
-  sourceFiles
+  program.getSourceFiles()
     .filter(sourceFile => isPathInsideDirectory(path.resolve(ROOT, ENTRY_DIR), sourceFile.fileName))
+    .map(sourceFile => program.__vue.languageService.getEmitOutput(sourceFile.fileName, true).outputFiles)
+    .flat()
+    .map(outputFile => ts.createSourceFile(outputFile.name, outputFile.text, ts.ScriptTarget.Latest, true))
+    .map(sourceFile => transformDtsAlias(sourceFile))
     .forEach(sourceFile => {
-      // TODO 一次循环代表一个文件
-      // 将visitNode作为一颗新的树输出
-      // 参考test.ts
-      ts.visitNode(sourceFile, node => {
-        return ts.visitNode(node, node => {
-          console.log(node.kind)
-          if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
-            ts.visitNode(node, node => {
-              if (ts.isStringLiteral(node)) {
-                return ts.factory.createStringLiteral("test")
-              }
-              return node
-            })
-          }
-          return node
-        })
-      })
+      const fileName = sourceFile.fileName
+      const content = ts.createPrinter().printNode(ts.EmitHint.Unspecified, sourceFile, sourceFile)
+      forceCreateFile(fileName)
+      fs.writeFile(fileName, content, "utf-8")
     })
-
-
-  for (const sourceFile of sourceFiles) {
-    const files = program.__vue.languageService.getEmitOutput(sourceFile.fileName, true).outputFiles
-    outputFiles.push(...files)
-  }
-  for (const outputFile of outputFiles) {
-    const content = outputFile.text.replaceAll(DEV_PKG_NAME, PKG_NAME)
-    forceCreateFile(outputFile.name)
-    await fs.writeFile(outputFile.name, content, "utf-8")
-  }
 }
 
 export async function build() {
@@ -290,4 +211,39 @@ function expandTheTsNode(node: ts.Node) {
 
 function getEnvConfig(): Record<string, any> {
   return dotenv.config({path: path.resolve(ROOT, "./.env")}).parsed || {}
+}
+
+// TODO
+// @ts-ignore
+const context = new Proxy(ts, {
+  get(t, k) {
+    // @ts-ignore
+    // console.log(`读取了${k}`)
+    // @ts-ignore
+    return t[k] || new Function()
+  },
+  // @ts-ignore
+  set(t, k) {
+    // @ts-ignore
+    // console.log(`设置了：${k}`)
+  }
+}) as ts.TransformationContext
+function transformDtsAlias<T extends ts.Node>(node: T): T {
+  if (
+    ts.isStringLiteral(node) &&
+    [ts.isImportDeclaration, ts.isExportDeclaration]
+      .some(cb => cb(node.parent))
+  ) {
+    const url = node.getText().slice(1, -1)
+    return ts.factory.createStringLiteral(transformAlias(url, node.getSourceFile().fileName)) as any
+  }
+  if (ts.isIdentifier(node)) return node
+  return ts.visitEachChild(node, node => transformDtsAlias(node), context)
+}
+
+// TODO 待优化
+function transformAlias(url: string, filePath: string) {
+  if (!url.startsWith("null-carousel")) return url
+  url = url.replace(/^null-carousel/, path.resolve(ROOT, OUT_DIR)).replace(/\\/g, "/")
+  return path.relative(filePath, url).replace(/\\/g, "/").replace(/^..\//, "./")
 }
