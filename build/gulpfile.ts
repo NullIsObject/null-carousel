@@ -46,7 +46,6 @@ export async function tsc() {
     const diagnostics = getTsDiagnostics(program)
       .filter(item => isPathInsideDirectory(fullEntryDir, item.file?.fileName || ""))
     if (diagnostics.length) {
-      diagnostics.forEach(item => console.log(item.file?.fileName))
       consola.error(ts.formatDiagnosticsWithColorAndContext(diagnostics, host))
       return
     }
@@ -114,8 +113,10 @@ export async function build() {
       const outDir = path.resolve(ROOT, OUT_DIR)
       const writingList: Promise<ReturnType<typeof fs.writeFile>>[] = []
       const resultList = Array.isArray(result) ? result : [result as vite.Rollup.RollupOutput]
-      for (const result of resultList) {
-        for (const file of result.output) {
+      resultList
+        .map(result => result.output)
+        .flat()
+        .forEach(file => {
           let outputPath = path.resolve(outDir, file.fileName)
           if (file.fileName.endsWith(".css")) {
             outputPath = path.resolve(outDir, STYLE_DIR, file.fileName)
@@ -123,9 +124,8 @@ export async function build() {
           const content = (file as vite.Rollup.OutputChunk).code || (file as vite.Rollup.OutputAsset).source
           forceCreateFile(outputPath)
           writingList.push(fs.writeFile(outputPath, content, "utf-8"))
-        }
-      }
-      return Promise.all([writingList])
+        })
+      return Promise.all(writingList)
     })
 }
 
