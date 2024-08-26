@@ -39,18 +39,20 @@ export async function tsc() {
   }
   const host = ts.createCompilerHost(options)
   const include = [".vue", ".ts", ".tsx"]
-  const dir = path.resolve(ROOT, ENTRY_DIR)
-  const rootNames = await readFilesRecursive({dir, include})
+  const fullEntryDir = path.resolve(ROOT, ENTRY_DIR)
+  const rootNames = await readFilesRecursive({dir: fullEntryDir, include})
   const program = vueTsc.createProgram({rootNames, options, host})
   {
     const diagnostics = getTsDiagnostics(program)
+      .filter(item => isPathInsideDirectory(fullEntryDir, item.file?.fileName || ""))
     if (diagnostics.length) {
+      diagnostics.forEach(item => console.log(item.file?.fileName))
       consola.error(ts.formatDiagnosticsWithColorAndContext(diagnostics, host))
       return
     }
   }
   program.getSourceFiles()
-    .filter(sourceFile => isPathInsideDirectory(path.resolve(ROOT, ENTRY_DIR), sourceFile.fileName))
+    .filter(sourceFile => isPathInsideDirectory(fullEntryDir, sourceFile.fileName))
     .map(sourceFile => program.__vue.languageService.getEmitOutput(sourceFile.fileName, true).outputFiles)
     .flat()
     .map(outputFile => ts.createSourceFile(outputFile.name, outputFile.text, ts.ScriptTarget.Latest, true))
@@ -198,36 +200,10 @@ function isPathInsideDirectory(parentPath: string, childPath: string,) {
   return childPath.startsWith(parentPath)
 }
 
-function expandTheTsNode(node: ts.Node) {
-  const result = [node]
-  ts.forEachChild(node, node => {
-    result.push(node)
-    if (!ts.isIdentifier(node)) {
-      result.push(...expandTheTsNode(node))
-    }
-  })
-  return result
-}
-
 function getEnvConfig(): Record<string, any> {
   return dotenv.config({path: path.resolve(ROOT, "./.env")}).parsed || {}
 }
 
-// TODO
-// @ts-ignore
-const context = new Proxy(ts, {
-  get(t, k) {
-    // @ts-ignore
-    // console.log(`读取了${k}`)
-    // @ts-ignore
-    return t[k] || new Function()
-  },
-  // @ts-ignore
-  set(t, k) {
-    // @ts-ignore
-    // console.log(`设置了：${k}`)
-  }
-}) as ts.TransformationContext
 function transformDtsAlias<T extends ts.Node>(node: T): T {
   if (
     ts.isStringLiteral(node) &&
@@ -238,12 +214,14 @@ function transformDtsAlias<T extends ts.Node>(node: T): T {
     return ts.factory.createStringLiteral(transformAlias(url, node.getSourceFile().fileName)) as any
   }
   if (ts.isIdentifier(node)) return node
-  return ts.visitEachChild(node, node => transformDtsAlias(node), context)
+
+  // @ts-ignore
+  return ts.visitEachChild(node, node => transformDtsAlias(node))
 }
 
 // TODO 待优化
 function transformAlias(url: string, filePath: string) {
-  if (!url.startsWith("null-carousel")) return url
-  url = url.replace(/^null-carousel/, path.resolve(ROOT, OUT_DIR)).replace(/\\/g, "/")
+  if (!url.startsWith(DEV_PKG_NAME)) return url
+  url = url.replace(DEV_PKG_NAME, path.resolve(ROOT, OUT_DIR)).replace(/\\/g, "/")
   return path.relative(filePath, url).replace(/\\/g, "/").replace(/^..\//, "./")
 }

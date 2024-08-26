@@ -28,6 +28,7 @@
     "@null-carousel/build": "workspace:*",
     "@null-carousel/root": "link:",
     "null-carousel": "workspace:*",
+    "typescript": "^5.5.4",
     "vue": "^3.4.23"
   }
 }
