@@ -13,7 +13,6 @@ const ROOT = path.resolve(__dirname, "../")
 const OUT_DIR = "dist/packages/null-carousel"
 const ENTRY_DIR = "packages/null-carousel"
 const PKG_NAME = "null-carousel"
-// const DEV_PKG_NAME = "@null-carousel/packages"
 const DEV_PKG_NAME = "null-carousel"
 const STYLE_DIR = "styles"
 
@@ -156,6 +155,10 @@ export function outReadme() {
   return fs.copy(src, dest)
 }
 
+export const orderlyBuild = series(clean, tsc, build, outPkgJSON, outReadme)
+
+export default series(clean, parallel(tsc, build, outPkgJSON, outReadme))
+
 async function readFilesRecursive({dir, include}: { dir: string, include: string[] }) {
   const result: string[] = []
   const files = await fs.readdir(dir)
@@ -173,10 +176,6 @@ async function readFilesRecursive({dir, include}: { dir: string, include: string
 
   return result
 }
-
-export const orderlyBuild = series(clean, tsc, build, outPkgJSON, outReadme)
-
-export default series(clean, parallel(tsc, build, outPkgJSON, outReadme))
 
 function getTsDiagnostics(program: ts.Program) {
   return [
@@ -219,9 +218,8 @@ function transformDtsAlias<T extends ts.Node>(node: T): T {
   return ts.visitEachChild(node, node => transformDtsAlias(node))
 }
 
-// TODO 待优化
 function transformAlias(url: string, filePath: string) {
   if (!url.startsWith(DEV_PKG_NAME)) return url
-  url = url.replace(DEV_PKG_NAME, path.resolve(ROOT, OUT_DIR)).replace(/\\/g, "/")
+  url = url.replace(DEV_PKG_NAME, path.resolve(ROOT, OUT_DIR))
   return path.relative(filePath, url).replace(/\\/g, "/").replace(/^..\//, "./")
 }
