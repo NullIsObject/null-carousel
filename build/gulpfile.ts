@@ -137,7 +137,6 @@ export async function build() {
 
 export async function buildStyle() {
   const fullEntryDir = normalizePath(path.resolve(ROOT, STYLE_ENTRY_DIR))
-  const fullOutDir = normalizePath(path.resolve(ROOT, OUT_DIR, STYLE_DIR))
   const filenameList = await readFilesRecursive({dir: fullEntryDir, include: [".scss", ".css", ".sass"]})
   const hrefMap: Record<string, string> = {}
   const pendingList = filenameList
@@ -179,14 +178,15 @@ export async function buildStyle() {
     .then(codeList => codeList.filter(codeItem => !!codeItem))
   if (codeList.length !== pendingList.length) throw new Error()
 
-  const writingList = codeList
-    .map(codeItem => {
-      if (!codeItem.code) return Promise.resolve()
-      const outputPath = normalizePath(path.resolve(fullOutDir, codeItem.filename.replace(fullEntryDir, ".")))
-      forceCreateFile(outputPath)
-      return fs.writeFile(outputPath, codeItem.code, FILE_CODE)
-    })
-  return Promise.all(writingList)
+  const result = codeList
+    .map(codeItem => codeItem.code)
+    .filter(code => !!code)
+    .reduce((result, code) => {
+      return `${result}${code}\n`
+    }, "")
+
+  const filename = forceCreateFile(path.resolve(ROOT, OUT_DIR, STYLE_DIR, "index.css"))
+  await fs.writeFile(filename, result, FILE_CODE)
 }
 
 export async function outPkgJSON() {
@@ -252,6 +252,7 @@ function forceCreateFile(filePath: string) {
     fs.removeSync(filePath)
     fs.createFileSync(filePath)
   }
+  return filePath
 }
 
 function isPathInsideDirectory(parentPath: string, childPath: string,) {
