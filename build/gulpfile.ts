@@ -139,6 +139,7 @@ export async function buildStyle() {
   const fullEntryDir = normalizePath(path.resolve(ROOT, STYLE_ENTRY_DIR))
   const fullOutDir = normalizePath(path.resolve(ROOT, OUT_DIR, STYLE_DIR))
   const filenameList = await readFilesRecursive({dir: fullEntryDir, include: [".scss", ".css", ".sass"]})
+  const hrefMap: Record<string, string> = {}
   const pendingList = filenameList
     .map(filename => {
       return getSassCode(filename)
@@ -147,11 +148,15 @@ export async function buildStyle() {
             syntax,
             importers: [
               {
-                load({href}) {
-                  return getSassCode(normalizePath(href))
-                },
                 canonicalize(importer) {
-                  return new URL(normalizePath(path.resolve(filename, "../", importer)))
+                  if (importer.startsWith("file:")) return new URL(importer)
+                  const filePath = normalizePath(path.resolve(filename, "../", importer))
+                  const url = new URL(`file:${filePath}`)
+                  hrefMap[url.href] = filePath
+                  return url
+                },
+                load({href}) {
+                  return getSassCode(hrefMap[href])
                 },
               }
             ]
@@ -172,7 +177,7 @@ export async function buildStyle() {
   const codeList: { code: string, filename: string }[] = await Promise
     .all(pendingList)
     .then(codeList => codeList.filter(codeItem => !!codeItem))
-  if (codeList.length !== pendingList.length) return
+  if (codeList.length !== pendingList.length) throw new Error()
 
   const writingList = codeList
     .map(codeItem => {
