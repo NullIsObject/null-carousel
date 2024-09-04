@@ -1,0 +1,7 @@
+@mixin bem($component) {
+  $ROOT: $vite_prefix + "__" + $component;
+
+  .#{$ROOT} {
+    @content;
+  }
+}

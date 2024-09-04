@@ -1,9 +1,0 @@
-@mixin bem($component) {
-  // TODO
-  //$ROOT: $vite_prefix + "-" + $component;
-  $ROOT: null-carousel + "-" + $component;
-
-  .#{$ROOT} {
-    @content;
-  }
-}

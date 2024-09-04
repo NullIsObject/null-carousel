@@ -28,7 +28,7 @@ export class BEM {
     if (args.length === 1) {
       e = args[0]
     }
-    let result = `${PREFIX}-${this.componentName}`
+    let result = `${PREFIX}__${this.componentName}`
     if (b) result += `-${b}`
     if (e) result += `__${e}`
     if (m) result += `--${m}`

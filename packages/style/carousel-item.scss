@@ -1,0 +1,9 @@
+@use "./config.scss" as config;
+
+@include config.bem("carousel-item") {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
