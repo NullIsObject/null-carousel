@@ -317,10 +317,5 @@ function injectVarToSass(source: string, syntax: sass.Syntax) {
 
 // TODO 待测试
 function normalizePath(path: string) {
-  path = vite.normalizePath(path)
-  try {
-    return new URL(vite.normalizePath(path)).href
-  } catch {
-    return path
-  }
+  return vite.normalizePath(path)
 }
