@@ -10,7 +10,6 @@
     "build:packages_clean": "pnpm run build:packages clean",
     "build:packages_tsc": "pnpm run build:packages tsc",
     "build:packages_build": "pnpm run build:packages build",
-    "build:packages_buildStyle": "pnpm run build:packages buildStyle",
     "build:packages_outPkgJSON": "pnpm run build:packages outPkgJSON",
     "build:packages_outReadme": "pnpm run build:packages outReadme"
   },

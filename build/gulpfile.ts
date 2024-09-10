@@ -13,6 +13,7 @@ import sass from "sass"
 const ROOT = path.resolve(__dirname, "../")
 const OUT_DIR = "dist/packages/null-carousel"
 const ENTRY_DIR = "packages/null-carousel"
+const SCSS_INJECT = "packages/null-carousel/private-utils/inject.scss"
 const STYLE_ENTRY_DIR = "packages/style"
 const PKG_NAME = "null-carousel"
 const DEV_PKG_NAME = "null-carousel"
@@ -49,7 +50,7 @@ export async function tsc() {
       .filter(item => isPathInsideDirectory(fullEntryDir, item.file?.fileName || ""))
     if (diagnostics.length) {
       consola.error(ts.formatDiagnosticsWithColorAndContext(diagnostics, host))
-      return
+      throw new Error("ts类型校验失败")
     }
   }
   program.getSourceFiles()
@@ -67,6 +68,7 @@ export async function tsc() {
 }
 
 export async function build() {
+  const scssInject = getScssInjectCode()
   const write = false
   return vite
     .build({
@@ -79,17 +81,8 @@ export async function build() {
       css: {
         preprocessorOptions: {
           scss: {
-            // TODO
-            async additionalData(content: string) {
-              const envConfig = getEnvConfig()
-              const scssVarStr = Object
-                .keys(envConfig)
-                .reduce((result, key) => {
-                  const value = envConfig[key]
-                  if (typeof value !== "string") return result
-                  return result + `$${key.toLowerCase()}: ${value};`
-                }, "")
-              return `${scssVarStr}${content}`
+            additionalData(content: string) {
+              return `${scssInject}${content}`
             },
           }
         }
@@ -124,8 +117,6 @@ export async function build() {
           let outputPath = path.resolve(outDir, file.fileName)
           if (file.fileName.endsWith(".css")) {
             outputPath = path.resolve(outDir, STYLE_DIR, file.fileName)
-            // TODO
-            consola.warn("组件中的样式可能与style模块的样式冲突")
           }
           const content = (file as vite.Rollup.OutputChunk).code || (file as vite.Rollup.OutputAsset).source
           forceCreateFile(outputPath)
@@ -135,6 +126,9 @@ export async function build() {
     })
 }
 
+/**
+ * @deprecated
+ */
 export async function buildStyle() {
   const fullEntryDir = normalizePath(path.resolve(ROOT, STYLE_ENTRY_DIR))
   const filenameList = await readFilesRecursive({dir: fullEntryDir, include: [".scss", ".css", ".sass"]})
@@ -176,7 +170,7 @@ export async function buildStyle() {
   const codeList: { code: string, filename: string }[] = await Promise
     .all(pendingList)
     .then(codeList => codeList.filter(codeItem => !!codeItem))
-  if (codeList.length !== pendingList.length) throw new Error()
+  if (codeList.length !== pendingList.length) throw new Error("css编译存在错误")
 
   const result = codeList
     .map(codeItem => codeItem.code)
@@ -216,9 +210,9 @@ export function outReadme() {
   return fs.copy(src, dest)
 }
 
-export const orderlyBuild = series(clean, tsc, build, buildStyle, outPkgJSON, outReadme)
+export const orderlyBuild = series(clean, tsc, build, outPkgJSON, outReadme)
 
-export default series(clean, parallel(tsc, build, buildStyle, outPkgJSON, outReadme))
+export default series(clean, parallel(tsc, build, outPkgJSON, outReadme))
 
 async function readFilesRecursive({dir, include}: { dir: string, include: string[] }) {
   const result: string[] = []
@@ -296,7 +290,6 @@ function getSassCode(filename: string): Promise<{ contents: string, syntax: sass
       if (filename.endsWith(".scss")) syntax = "scss"
       if (filename.endsWith(".css")) syntax = "css"
       if (filename.endsWith(".sass")) syntax = "indented"
-      // TODO 考虑只在config.scss注入
       const contents = injectVarToSass(source, syntax)
       return {contents, syntax}
     })
@@ -321,7 +314,11 @@ function injectVarToSass(source: string, syntax: sass.Syntax) {
   return source
 }
 
-// TODO 待测试
+function getScssInjectCode() {
+  const scssInject = fs.readFileSync(path.resolve(ROOT, SCSS_INJECT), FILE_CODE)
+  return injectVarToSass(scssInject, "scss")
+}
+
 function normalizePath(path: string) {
   return vite.normalizePath(path)
 }
