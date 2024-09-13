@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {BEM} from "null-carousel/private-utils/bem"
+import {useCarouselItem} from "./utils"
 
 const componentName = "carousel-item"
 const bem = new BEM(componentName)
@@ -7,6 +8,8 @@ const ROOT_CLASS_NAME = bem.bem()
 defineOptions({
   name: componentName,
 })
+
+const {} = useCarouselItem()
 </script>
 <template>
   <div :class="[ROOT_CLASS_NAME]">

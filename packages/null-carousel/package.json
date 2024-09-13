@@ -9,5 +9,9 @@
   "devDependencies": {
     "null-carousel": "./",
     "vite": "^5.1.4"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.17.7",
+    "lodash": "^4.17.21"
   }
 }

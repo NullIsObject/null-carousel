@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {computed, CSSProperties} from "vue"
-import useCarousel from "./use-carousel"
+import {useCarousel} from "./utils"
 import {BEM} from "null-carousel/private-utils/bem"
 
 const componentName = "carousel"
@@ -24,15 +24,15 @@ const rootStyle = computed(() => {
   const style: CSSProperties = {
     width: props.width || "",
     height: props.height || "",
-    overflow: "hidden",
   }
 
   return style
 })
 
-const {} = useCarousel()
+const {childList} = useCarousel()
 </script>
 <template>
+  {{ childList.length }}
   <div :class="[ROOT_CLASS_NAME]" :style="rootStyle">
     <div style="position:relative;width: 100%;height: 100%;">
       <slot name="default"></slot>
