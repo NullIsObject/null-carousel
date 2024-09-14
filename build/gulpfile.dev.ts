@@ -9,7 +9,6 @@ const watchDir = `${normalizePath(path.resolve(root, entryDir))}/**`
 const outDir = "packages/dist"
 
 export async function dev() {
-  await buildUtils.clean(outDir)
   return build().finally(() => {
     watch([watchDir], (resolve) => {
       build().finally(resolve)
