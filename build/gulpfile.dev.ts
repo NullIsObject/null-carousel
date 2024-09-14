@@ -8,7 +8,8 @@ const entryDir = "packages/null-carousel"
 const watchDir = `${normalizePath(path.resolve(root, entryDir))}/**`
 const outDir = "packages/dist"
 
-export function dev() {
+export async function dev() {
+  await buildUtils.clean(outDir)
   return build().finally(() => {
     watch([watchDir], (resolve) => {
       build().finally(resolve)
@@ -16,10 +17,11 @@ export function dev() {
   })
 }
 
-export async function build() {
-  await buildUtils.clean(outDir)
-  await buildUtils.tsc(outDir)
-  await buildUtils.build(outDir)
-  await buildUtils.outPkgJSON(outDir)
-  await buildUtils.outReadme(outDir)
+export function build() {
+  return Promise.all([
+    buildUtils.tsc(outDir),
+    buildUtils.build(outDir),
+    buildUtils.outPkgJSON(outDir),
+    buildUtils.outReadme(outDir),
+  ])
 }
