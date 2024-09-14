@@ -15,7 +15,7 @@ importers:
         specifier: 'link:'
         version: 'link:'
       null-carousel:
-        specifier: workspace:*
+        specifier: workspace:./packages/null-carousel
         version: link:packages/null-carousel
       typescript:
         specifier: ^5.5.4
@@ -77,9 +77,24 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
         version: 5.0.4(vite@5.1.4(@types/node@20.11.24)(less@4.2.0)(sass@1.77.8))(vue@3.4.23(typescript@5.5.4))
+      null-carousel:
+        specifier: workspace:../dist
+        version: link:../dist
       vite:
         specifier: ^5.1.4
         version: 5.1.4(@types/node@20.11.24)(less@4.2.0)(sass@1.77.8)
+
+  packages/dist:
+    dependencies:
+      '@types/lodash':
+        specifier: ^4.17.7
+        version: 4.17.7
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      vue:
+        specifier: ^3.4.23
+        version: 3.4.23(typescript@5.5.4)
 
   packages/null-carousel:
     dependencies:

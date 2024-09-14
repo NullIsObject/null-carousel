@@ -1,0 +1,30 @@
+{
+  "name": "null-carousel",
+  "version": "0.0.0",
+  "description": "A Carousel Component Library for Vue.js.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NullIsObject/null-carousel.git"
+  },
+  "keywords": [
+    "carousel",
+    "vue",
+    "components"
+  ],
+  "main": "index",
+  "module": "index",
+  "peerDependencies": {
+    "vue": "^3.4.23"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.17.7",
+    "lodash": "^4.17.21"
+  },
+  "exports": {
+    ".": "./index",
+    "./styles/*": "./styles/*"
+  }
+}

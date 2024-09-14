@@ -194,7 +194,8 @@ export async function outPkgJSON(outDir?:string) {
     ...rootPkg,
     ...packagesPkg,
     exports: {
-      ".": "./index"
+      ".": "./index",
+      [`./${STYLE_DIR}/*`]: "./styles/*"
     }
   }
   finalPkg.name = rootPkg.name
