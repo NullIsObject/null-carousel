@@ -5,8 +5,8 @@
   "main": "index.ts",
   "module": "index.ts",
   "scripts": {
-    "build:packages_watch_build": "gulp --require @esbuild-kit/cjs-loader -f gulpfile.watch.ts build",
-    "build:packages": "gulp --require @esbuild-kit/cjs-loader -f gulpfile.ts",
+    "build:dev": "gulp --require @esbuild-kit/cjs-loader -f gulpfile.dev.ts dev",
+    "build:packages": "gulp --require @esbuild-kit/cjs-loader -f gulpfile.build.ts",
     "build:packages_orderlyBuild": "pnpm run build:packages orderlyBuild",
     "build:packages_clean": "pnpm run build:packages clean",
     "build:packages_tsc": "pnpm run build:packages tsc",

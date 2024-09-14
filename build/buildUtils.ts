@@ -1,4 +1,3 @@
-import {series, parallel} from "gulp"
 import vite from "vite"
 import path from "node:path"
 import fs from "fs-extra"
@@ -20,14 +19,16 @@ const DEV_PKG_NAME = "null-carousel"
 const STYLE_DIR = "styles"
 const FILE_CODE = "utf-8"
 
-export async function clean() {
-  await fs.remove(path.resolve(ROOT, OUT_DIR))
-  await fs.mkdirs(path.resolve(ROOT, OUT_DIR))
+export async function clean(outDir?: string) {
+  outDir ||= OUT_DIR
+  await fs.remove(path.resolve(ROOT, outDir))
+  await fs.mkdirs(path.resolve(ROOT, outDir))
 }
 
-export async function tsc() {
+export async function tsc(outDir?: string) {
+  outDir ||= OUT_DIR
   const options: ts.CompilerOptions = {
-    outDir: path.resolve(ROOT, OUT_DIR),
+    outDir: path.resolve(ROOT, outDir),
     allowJs: true,
     declaration: true,
     incremental: true,
@@ -58,7 +59,7 @@ export async function tsc() {
     .map(sourceFile => program.__vue.languageService.getEmitOutput(sourceFile.fileName, true).outputFiles)
     .flat()
     .map(outputFile => ts.createSourceFile(outputFile.name, outputFile.text, ts.ScriptTarget.Latest, true))
-    .map(sourceFile => transformDtsAlias(sourceFile))
+    .map(sourceFile => transformDtsAlias(sourceFile, outDir))
     .forEach(sourceFile => {
       const fileName = sourceFile.fileName
       const content = ts.createPrinter().printNode(ts.EmitHint.Unspecified, sourceFile, sourceFile)
@@ -67,7 +68,8 @@ export async function tsc() {
     })
 }
 
-export async function build() {
+export async function build(outDir?: string) {
+  outDir ||= OUT_DIR
   const scssInject = getScssInjectCode()
   const write = false
   return vite
@@ -89,7 +91,7 @@ export async function build() {
       },
       build: {
         write,
-        outDir: OUT_DIR,
+        outDir: outDir,
         emptyOutDir: false,
         lib: {
           entry: [ENTRY_DIR],
@@ -97,7 +99,7 @@ export async function build() {
           formats: ["es"]
         },
         rollupOptions: {
-          external: ["vue"],
+          external: ["vue", "lodash"],
           output: {
             preserveModules: true,
             format: "module",
@@ -107,16 +109,16 @@ export async function build() {
     })
     .then(result => {
       if (write) return
-      const outDir = path.resolve(ROOT, OUT_DIR)
+      const fullOutDir = path.resolve(ROOT, outDir)
       const writingList: Promise<ReturnType<typeof fs.writeFile>>[] = []
       const resultList = Array.isArray(result) ? result : [result as vite.Rollup.RollupOutput]
       resultList
         .map(result => result.output)
         .flat()
         .forEach(file => {
-          let outputPath = path.resolve(outDir, file.fileName)
+          let outputPath = path.resolve(fullOutDir, file.fileName)
           if (file.fileName.endsWith(".css")) {
-            outputPath = path.resolve(outDir, STYLE_DIR, file.fileName)
+            outputPath = path.resolve(fullOutDir, STYLE_DIR, file.fileName)
           }
           const content = (file as vite.Rollup.OutputChunk).code || (file as vite.Rollup.OutputAsset).source
           forceCreateFile(outputPath)
@@ -183,15 +185,17 @@ export async function buildStyle() {
   await fs.writeFile(filename, result, FILE_CODE)
 }
 
-export async function outPkgJSON() {
+export async function outPkgJSON(outDir?:string) {
+  outDir ||= OUT_DIR
   const rootPkg: Record<string, any> = await fs.readJSON(path.resolve(ROOT, "package.json"))
   const packagesPkg: Record<string, any> = await fs.readJSON(path.resolve(ROOT, ENTRY_DIR, "package.json"))
-  const outputPath = path.resolve(ROOT, OUT_DIR, "package.json")
+  const outputPath = path.resolve(ROOT, outDir, "package.json")
   const finalPkg: Record<string, any> = {
     ...rootPkg,
     ...packagesPkg,
     exports: {
-      ".": "./index"
+      ".": "./index",
+      [`./${STYLE_DIR}/*`]: "./styles/*"
     }
   }
   finalPkg.name = rootPkg.name
@@ -204,15 +208,12 @@ export async function outPkgJSON() {
   await fs.writeJSON(outputPath, finalPkg, {spaces: 2})
 }
 
-export function outReadme() {
+export function outReadme(outDir?:string) {
+  outDir ||= OUT_DIR
   const src = path.resolve(ROOT, "README.md")
-  const dest = path.resolve(ROOT, OUT_DIR, "README.md")
+  const dest = path.resolve(ROOT, outDir, "README.md")
   return fs.copy(src, dest)
 }
-
-export const orderlyBuild = series(clean, tsc, build, outPkgJSON, outReadme)
-
-export default series(clean, parallel(tsc, build, outPkgJSON, outReadme))
 
 async function readFilesRecursive({dir, include}: { dir: string, include: string[] }) {
   const result: string[] = []
@@ -259,24 +260,24 @@ function getEnvConfig(): Record<string, any> {
   return dotenv.config({path: path.resolve(ROOT, "./.env")}).parsed || {}
 }
 
-function transformDtsAlias<T extends ts.Node>(node: T): T {
+function transformDtsAlias<T extends ts.Node>(node: T, outDir: string): T {
   if (
     ts.isStringLiteral(node) &&
     [ts.isImportDeclaration, ts.isExportDeclaration]
       .some(cb => cb(node.parent))
   ) {
     const url = node.getText().slice(1, -1)
-    return ts.factory.createStringLiteral(transformAlias(url, node.getSourceFile().fileName)) as any
+    return ts.factory.createStringLiteral(transformAlias(url, node.getSourceFile().fileName, outDir)) as any
   }
   if (ts.isIdentifier(node)) return node
 
   // @ts-ignore
-  return ts.visitEachChild(node, node => transformDtsAlias(node))
+  return ts.visitEachChild(node, node => transformDtsAlias(node, outDir))
 }
 
-function transformAlias(url: string, filePath: string) {
+function transformAlias(url: string, filePath: string, outDir: string) {
   if (!url.startsWith(DEV_PKG_NAME)) return url
-  url = url.replace(DEV_PKG_NAME, path.resolve(ROOT, OUT_DIR))
+  url = url.replace(DEV_PKG_NAME, path.resolve(ROOT, outDir))
   return path.relative(filePath, url).replace(/\\/g, "/").replace(/^..\//, "./")
 }
 

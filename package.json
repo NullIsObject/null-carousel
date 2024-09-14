@@ -9,8 +9,8 @@
   "scripts": {
     "build": "pnpm run -C build build:packages",
     "orderlyBuild": "pnpm run -C build build:packages_orderlyBuild",
-    "dev": "pnpm run -C packages/dev start",
-    "build_watch": "pnpm run -C build build:packages_watch_build"
+    "devBuild": "pnpm run -C build build:dev",
+    "dev": "pnpm run -C packages/dev start"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
   "devDependencies": {
     "@null-carousel/build": "workspace:*",
     "@null-carousel/root": "link:",
-    "null-carousel": "workspace:*",
+    "null-carousel": "workspace:./packages/null-carousel",
     "typescript": "^5.5.4",
     "vue": "^3.4.23"
   }
