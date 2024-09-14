@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import {
-  Carousel, CarouselItem
+  Carousel, CarouselItem, IconTrilateral
 } from "null-carousel"
 import {onMounted, reactive, ref, unref, getCurrentInstance} from "vue"
 
 const state = reactive({
-  data: new Array<number>()
+  data: [1]
+})
+
+window.addEventListener("click", () => {
+  state.data.unshift(1)
+  console.log(state.data.length)
 })
 
 const refCarousel = ref(null)
@@ -13,10 +18,7 @@ const refCarousel = ref(null)
 <template>
   <div>
     <Carousel ref="refCarousel" width="500px" height="200px">
-      <template>
-        <CarouselItem v-for="i in 10" style="background-color: red">111</CarouselItem>
-      </template>
-      <CarouselItem v-for="i in 10" style="background-color: red">111</CarouselItem>
+      <CarouselItem v-for="i in state.data" style="background-color: red">111</CarouselItem>
     </Carousel>
   </div>
 </template>

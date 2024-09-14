@@ -17,10 +17,12 @@ export async function dev() {
 }
 
 export function build() {
-  return Promise.all([
-    buildUtils.tsc(outDir),
-    buildUtils.build(outDir),
-    buildUtils.outPkgJSON(outDir),
-    buildUtils.outReadme(outDir),
-  ])
+  return Promise
+    .all([
+      buildUtils.tsc(outDir),
+      buildUtils.build(outDir),
+      buildUtils.outPkgJSON(outDir),
+      buildUtils.outReadme(outDir),
+    ])
+    .catch(() => void 0)
 }

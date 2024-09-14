@@ -1,23 +1,22 @@
 <script setup lang="ts">
 import {BEM} from "null-carousel/private-utils/bem"
-import {useCarouselItem} from "./utils"
+import useCarouselItem from "./useCarousel"
 
 const componentName = "carousel-item"
 const bem = new BEM(componentName)
-const ROOT_CLASS_NAME = bem.bem()
 defineOptions({
   name: componentName,
 })
 
-const {} = useCarouselItem()
+const {activeIndex} = useCarouselItem()
 </script>
 <template>
-  <div :class="[ROOT_CLASS_NAME]">
+  <div :class="[bem.bem()]">
     <slot name="default"></slot>
   </div>
 </template>
 <style lang="scss">
-@include bem("carousel-item") {
+.#{bem("carousel-item")} {
   width: 100%;
   height: 100%;
   position: absolute;

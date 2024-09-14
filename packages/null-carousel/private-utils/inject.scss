@@ -1,7 +1,5 @@
-@mixin bem($component) {
-  $ROOT: $vite_prefix + "__" + $component;
+@use "sass:map";
 
-  .#{$ROOT} {
-    @content;
-  }
+@function bem($component) {
+  @return $vite_prefix + "__" + $component;
 }

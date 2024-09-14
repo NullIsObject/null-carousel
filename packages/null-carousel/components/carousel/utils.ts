@@ -1,100 +1,59 @@
 import {
-  computed,
-  reactive,
-  readonly,
-  getCurrentInstance,
   ComponentInternalInstance,
-  provide,
-  unref,
-  inject,
-  onMounted,
-  onUnmounted,
-  VNodeNormalizedChildren
+  VNodeNormalizedChildren,
+  VNode,
+  isVNode,
+  VNodeChild,
 } from "vue"
-import lodash from "lodash"
 
 export const carouselCtxKey = Symbol()
-export function useCarousel() {
-  const state = reactive({
-    index: 0,
-  })
-  const currentInstance = getCurrentInstance()
-  if (!currentInstance) throw new TypeError("context error")
 
-  const children: Record<number, ComponentInternalInstance> = reactive({})
-  const childList = computed(() => getOrderedChildren(currentInstance, lodash.values(children)))
-  const communicator = new class extends Communicator {
-    addItem(item: ComponentInternalInstance) {
-      children[item.uid] = item
-    }
-    delItem(item: ComponentInternalInstance) {
-      delete children[item.uid]
-    }
-  }
-
-  provide(carouselCtxKey, communicator)
-
-  const maxIndex = computed(() => unref(childList).length)
-  const index = computed({
-    get() {
-      const max = unref(maxIndex)
-      if (state.index > max) state.index = max
-      return state.index
-    },
-    set(v) {
-      let result = v
-      // TODO 循环 | 限制
-      if (v < 0) result = 0
-      if (v > unref(maxIndex)) result = unref(maxIndex)
-      state.index = result
-    }
-  })
-
-  function prev() {
-    --index.value
-  }
-
-  function next() {
-    ++index.value
-  }
-
-
-  // TODO 去掉childList
-  return {state: readonly(state), prev, next, childList}
+export function getOrderedChildren(root: FlattenVNodes | VNode | VNodeNormalizedChildren, children: ComponentInternalInstance[]): ComponentInternalInstance[] {
+  const result: ComponentInternalInstance[] = []
+  flattedChildren(root)
+    .filter((n): n is VNode => isVNode(n))
+    .map(n => n.component?.uid)
+    .filter((i): i is number => Number.isFinite(i))
+    .forEach(uid => {
+      const t = children.find(n => n.uid === uid)
+      t && result.push(t)
+    })
+  return result
 }
 
-export function useCarouselItem() {
-  const state = reactive({})
-  const communicator = inject<Communicator>(carouselCtxKey)
-  const currentInstance = getCurrentInstance()
-  if (!communicator) throw new TypeError("communicator is undefined")
-  if (!currentInstance) throw new TypeError("context error")
+type VNodeChildAtom = Exclude<VNodeChild, Array<any>>
+type RawSlots = Exclude<
+  VNodeNormalizedChildren,
+  Array<any> | null | string
+>
+type FlattenVNodes = Array<VNodeChildAtom | RawSlots>
 
-  onMounted(() => {
-    communicator.addItem(currentInstance)
+/**
+ * @see {@link https://github.com/element-plus/element-plus/blob/b45346cc935362703b5925a2aa769ba7bfbba778/packages/utils/vue/vnode.ts#L149}
+ */
+export const flattedChildren = (
+  children: FlattenVNodes | VNode | VNodeNormalizedChildren
+): FlattenVNodes => {
+  const vNodes = Array.isArray(children) ? children : [children]
+  const result: FlattenVNodes = []
+
+  vNodes.forEach((child) => {
+    if (Array.isArray(child)) {
+      result.push(...flattedChildren(child))
+    } else if (isVNode(child) && Array.isArray(child.children)) {
+      result.push(...flattedChildren(child.children))
+    } else {
+      result.push(child)
+      if (isVNode(child) && child.component?.subTree) {
+        result.push(...flattedChildren(child.component.subTree))
+      }
+    }
   })
-
-  onUnmounted(() => {
-    communicator.delItem(currentInstance)
-  })
-
-  return {state: readonly(state)}
+  return result
 }
 
-// TODO
-function getOrderedChildren<T = (ComponentInternalInstance | VNodeNormalizedChildren)>(root: T, children: T[]): T[] {
-  if ((root as ComponentInternalInstance)?.subTree?.children) {
-    // const node = (root as ComponentInternalInstance)?.subTree?.children
-    ///////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////
-  }
-  return []
-}
-
-abstract class Communicator {
+export abstract class Communicator {
+  abstract state: Readonly<{ activeIndex: number }>
   abstract addItem(item: ComponentInternalInstance): void
   abstract delItem(item: ComponentInternalInstance): void
 }
