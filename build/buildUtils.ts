@@ -1,4 +1,3 @@
-import {series, parallel} from "gulp"
 import vite from "vite"
 import path from "node:path"
 import fs from "fs-extra"

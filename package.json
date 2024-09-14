@@ -10,7 +10,7 @@
     "build": "pnpm run -C build build:packages",
     "orderlyBuild": "pnpm run -C build build:packages_orderlyBuild",
     "dev": "pnpm run -C packages/dev start",
-    "build_watch": "pnpm run -C build build:packages_watch_build"
+    "devBuild__watch": "pnpm run -C build build:dev"
   },
   "repository": {
     "type": "git",
