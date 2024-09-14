@@ -1,4 +1,4 @@
-import * as gulpfile from "./gulpfile"
+import * as gulpfile from "./buildUtils"
 import {watch} from "gulp"
 import path from "node:path"
 import {normalizePath} from "vite"

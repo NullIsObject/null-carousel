@@ -97,7 +97,7 @@ export async function build() {
           formats: ["es"]
         },
         rollupOptions: {
-          external: ["vue"],
+          external: ["vue", "lodash"],
           output: {
             preserveModules: true,
             format: "module",
