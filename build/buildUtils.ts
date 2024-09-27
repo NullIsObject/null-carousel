@@ -6,7 +6,6 @@ import viteJSX from "@vitejs/plugin-vue-jsx"
 import * as vueTsc from "vue-tsc"
 import ts from "typescript"
 import consola from "consola"
-import dotenv from "dotenv"
 import sass from "sass"
 
 const ROOT = path.resolve(__dirname, "../")
@@ -185,7 +184,7 @@ export async function buildStyle() {
   await fs.writeFile(filename, result, FILE_CODE)
 }
 
-export async function outPkgJSON(outDir?:string) {
+export async function outPkgJSON(outDir?: string) {
   outDir ||= OUT_DIR
   const rootPkg: Record<string, any> = await fs.readJSON(path.resolve(ROOT, "package.json"))
   const packagesPkg: Record<string, any> = await fs.readJSON(path.resolve(ROOT, ENTRY_DIR, "package.json"))
@@ -208,7 +207,7 @@ export async function outPkgJSON(outDir?:string) {
   await fs.writeJSON(outputPath, finalPkg, {spaces: 2})
 }
 
-export function outReadme(outDir?:string) {
+export function outReadme(outDir?: string) {
   outDir ||= OUT_DIR
   const src = path.resolve(ROOT, "README.md")
   const dest = path.resolve(ROOT, outDir, "README.md")
@@ -257,7 +256,7 @@ function isPathInsideDirectory(parentPath: string, childPath: string,) {
 }
 
 function getEnvConfig(): Record<string, any> {
-  return dotenv.config({path: path.resolve(ROOT, "./.env")}).parsed || {}
+  return vite.loadEnv("development", ROOT)
 }
 
 function transformDtsAlias<T extends ts.Node>(node: T, outDir: string): T {
