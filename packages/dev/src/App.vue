@@ -5,20 +5,20 @@ import {
 import {onMounted, reactive, ref, unref, getCurrentInstance} from "vue"
 
 const state = reactive({
-  data: [1]
+  data: [0, 1, 2]
 })
 
-window.addEventListener("click", () => {
+function addItem() {
   state.data.unshift(1)
-  console.log(state.data.length)
-})
+}
 
 const refCarousel = ref(null)
 </script>
 <template>
   <div>
     <Carousel ref="refCarousel" width="500px" height="200px">
-      <CarouselItem v-for="i in state.data" style="background-color: red">111</CarouselItem>
+      <CarouselItem v-for="i in state.data" style="background-color: #99a9bf">{{ i }}</CarouselItem>
     </Carousel>
+    <button @click="addItem">addItem</button>
   </div>
 </template>

@@ -1,14 +1,16 @@
-import {ComponentInternalInstance, computed, getCurrentInstance, provide, reactive, readonly, unref} from "vue"
+import {ComponentInternalInstance, computed, getCurrentInstance, provide, reactive, readonly, unref, watch} from "vue"
 import lodash from "lodash"
 import {carouselCtxKey, Communicator, getOrderedChildren} from "./utils"
 
-export default function useCarousel() {
+export default function useCarousel(props: Required<Props>) {
   const state = reactive({
     activeIndex: 0,
+    loop: props.loop
   })
   const currentInstance = getCurrentInstance()
   if (!currentInstance) throw new TypeError("context error")
 
+  watch(() => props.loop, loop => state.loop = loop, {immediate: true})
   const children: Record<number, ComponentInternalInstance> = reactive({})
   const childList = computed(() => getOrderedChildren(currentInstance.subTree, lodash.values(children)))
   const communicator = new class extends Communicator {
@@ -19,11 +21,14 @@ export default function useCarousel() {
     delItem(item: ComponentInternalInstance) {
       delete children[item.uid]
     }
+    getIndex(item: ComponentInternalInstance) {
+      return unref(childList).findIndex(i => i.uid === item.uid)
+    }
   }
 
   provide(carouselCtxKey, communicator)
 
-  const maxIndex = computed(() => unref(childList).length)
+  const maxIndex = computed(() => unref(childList).length - 1)
   const activeIndex = computed({
     get() {
       const max = unref(maxIndex)
@@ -32,9 +37,13 @@ export default function useCarousel() {
     },
     set(v) {
       let result = v
-      // TODO 循环 | 限制
-      if (v < 0) result = 0
-      if (v > unref(maxIndex)) result = unref(maxIndex)
+      if (props.loop) {
+        if (v < 0) result = unref(maxIndex)
+        if (v > unref(maxIndex)) result = 0
+      } else {
+        if (v < 0) result = 0
+        if (v > unref(maxIndex)) result = unref(maxIndex)
+      }
       state.activeIndex = result
     }
   })
@@ -48,4 +57,10 @@ export default function useCarousel() {
   }
 
   return {state: readonly(state), prev, next, activeIndex: readonly(activeIndex)}
+}
+
+export interface Props {
+  width?: string,
+  height?: string,
+  loop?: boolean,
 }

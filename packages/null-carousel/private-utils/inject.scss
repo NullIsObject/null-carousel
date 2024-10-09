@@ -1,5 +1,5 @@
 @use "sass:map";
 
-@function bem($component) {
+@function root($component) {
   @return $vite_prefix + "__" + $component;
 }

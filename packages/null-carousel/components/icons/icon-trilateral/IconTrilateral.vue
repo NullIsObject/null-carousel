@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import {computed, CSSProperties} from "vue"
 import {Property} from "csstype"
+import {BEM} from "null-carousel/private-utils/bem"
+
+const componentName = "icon-trilateral"
+const bem = new BEM(componentName)
+defineOptions({
+  name: componentName,
+})
 
 interface Props {
   size?: number,
@@ -14,10 +21,11 @@ const props = withDefaults(defineProps<Props>(), {
 
 const style = computed(() => {
   const size = props.size
+  const height = Math.sqrt(size ** 2 - (size / 2) ** 2)
   const style: CSSProperties = {
     "width": 0,
     "height": 0,
-    "border-bottom": `${size}px solid ${props.color}`,
+    "border-bottom": `${height}px solid ${props.color}`,
     "border-left": `${size / 2}px solid transparent`,
     "border-right": `${size / 2}px solid transparent`,
   }
@@ -25,5 +33,5 @@ const style = computed(() => {
 })
 </script>
 <template>
-  <div class="null-carousel__icon" :style="style"></div>
+  <div :class="bem.bem()" :style="style"></div>
 </template>

@@ -53,7 +53,8 @@ export const flattedChildren = (
 }
 
 export abstract class Communicator {
-  abstract state: Readonly<{ activeIndex: number }>
+  abstract state: Readonly<{ activeIndex: number, loop: boolean }>
   abstract addItem(item: ComponentInternalInstance): void
   abstract delItem(item: ComponentInternalInstance): void
+  abstract getIndex(item: ComponentInternalInstance): number
 }
