@@ -11,10 +11,9 @@ defineOptions({
 
 const {state} = useCarouselItem()
 const isActive = computed(() => state.activeIndex === state.index)
-// TODO
-const isPrev = computed(() => state.activeIndex === state.index)
-// TODO
-const isNext = computed(() => state.activeIndex === state.index)
+// TODO 考虑不到三张图的情况
+const isPrev = computed(() => state.activeIndex - 1 === state.index || (state.loop && state.index === state.maxIndex))
+const isNext = computed(() => state.activeIndex + 1 === state.index || (state.loop && state.index === 0))
 </script>
 <template>
   <div :class="{
@@ -37,6 +36,14 @@ const isNext = computed(() => state.activeIndex === state.index)
 
   &--active {
     z-index: 0;
+  }
+
+  &--prev {
+
+  }
+
+  &--next {
+
   }
 }
 </style>

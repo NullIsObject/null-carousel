@@ -6,8 +6,12 @@
   },
   "devDependencies": {
     "@null-carousel/dev": "workspace:*",
+    "@types/lodash": "^4.17.7",
     "@vitejs/plugin-vue": "^5.0.4",
     "null-carousel": "workspace:../dist",
     "vite": "^5.1.4"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
   }
 }

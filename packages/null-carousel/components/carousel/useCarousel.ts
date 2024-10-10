@@ -5,7 +5,8 @@ import {carouselCtxKey, Communicator, getOrderedChildren} from "./utils"
 export default function useCarousel(props: Required<Props>) {
   const state = reactive({
     activeIndex: 0,
-    loop: props.loop
+    loop: props.loop,
+    maxIndex: -1,
   })
   const currentInstance = getCurrentInstance()
   if (!currentInstance) throw new TypeError("context error")
@@ -29,6 +30,7 @@ export default function useCarousel(props: Required<Props>) {
   provide(carouselCtxKey, communicator)
 
   const maxIndex = computed(() => unref(childList).length - 1)
+  watch(maxIndex, maxIndex => state.maxIndex = maxIndex)
   const activeIndex = computed({
     get() {
       const max = unref(maxIndex)

@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import {
-  Carousel, CarouselItem, IconTrilateral
-} from "null-carousel"
-import {onMounted, reactive, ref, unref, getCurrentInstance} from "vue"
+import {Carousel, CarouselItem} from "null-carousel"
+import {reactive, ref} from "vue"
 
 const state = reactive({
   data: [0, 1, 2]

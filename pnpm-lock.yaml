@@ -67,10 +67,17 @@ importers:
         version: 1.8.27(typescript@5.5.4)
 
   packages/dev:
+    dependencies:
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
     devDependencies:
       '@null-carousel/dev':
         specifier: workspace:*
         version: 'link:'
+      '@types/lodash':
+        specifier: ^4.17.7
+        version: 4.17.7
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
         version: 5.0.4(vite@5.1.4(@types/node@20.11.24)(less@4.2.0)(sass@1.77.8))(vue@3.4.23(typescript@5.5.4))
