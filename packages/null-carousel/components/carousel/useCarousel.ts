@@ -1,17 +1,20 @@
 import {ComponentInternalInstance, computed, getCurrentInstance, provide, reactive, readonly, unref, watch} from "vue"
 import lodash from "lodash"
-import {carouselCtxKey, Communicator, getOrderedChildren} from "./utils"
+import {carouselCtxKey, Communicator, getOrderedChildren, ANIMATION_TYPE, CommunicatorState} from "./utils"
 
 export default function useCarousel(props: Required<Props>) {
-  const state = reactive({
+  const state = reactive<CommunicatorState>({
     activeIndex: 0,
     loop: props.loop,
     maxIndex: -1,
+    animationType: ANIMATION_TYPE.PRIMARY_HORIZONTAL
   })
   const currentInstance = getCurrentInstance()
   if (!currentInstance) throw new TypeError("context error")
 
-  watch(() => props.loop, loop => state.loop = loop, {immediate: true})
+  watch(() => props.loop, v => state.loop = v, {immediate: true})
+  watch(() => props.animationType, v => state.animationType = v, {immediate: true})
+
   const children: Record<number, ComponentInternalInstance> = reactive({})
   const childList = computed(() => getOrderedChildren(currentInstance.subTree, lodash.values(children)))
   const communicator = new class extends Communicator {
@@ -65,4 +68,6 @@ export interface Props {
   width?: string,
   height?: string,
   loop?: boolean,
+  animationType?: ANIMATION_TYPE,
+  autoplay?: boolean,
 }

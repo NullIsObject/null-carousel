@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {computed, CSSProperties} from "vue"
-import useCarousel,{Props} from "./useCarousel"
+import useCarousel, {Props} from "./useCarousel"
 import {BEM} from "null-carousel/private-utils/bem"
 import TrilateralIcon from "null-carousel/components/icons/icon-trilateral"
+import {ANIMATION_TYPE} from "./utils"
 
 const componentName = "carousel"
 const bem = new BEM(componentName)
@@ -14,6 +15,9 @@ const props = withDefaults(defineProps<Props>(), {
   width: "100%",
   height: "100%",
   loop: true,
+  animationType: ANIMATION_TYPE.PRIMARY_HORIZONTAL,
+  // TODO
+  autoplay: false,
 })
 
 const rootStyle = computed(() => {
@@ -58,6 +62,7 @@ const {activeIndex, prev, next} = useCarousel(props)
     position: relative;
     width: 100%;
     height: 100%;
+    overflow: hidden;
   }
 
   &__prev-icon,

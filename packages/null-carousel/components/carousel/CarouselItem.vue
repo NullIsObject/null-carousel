@@ -2,6 +2,7 @@
 import {BEM} from "null-carousel/private-utils/bem"
 import useCarouselItem from "./useCarouselItem"
 import {computed} from "vue"
+import {ANIMATION_TYPE} from "./utils"
 
 const componentName = "carousel-item"
 const bem = new BEM(componentName)
@@ -11,9 +12,15 @@ defineOptions({
 
 const {state} = useCarouselItem()
 const isActive = computed(() => state.activeIndex === state.index)
-// TODO 考虑不到三张图的情况
-const isPrev = computed(() => state.activeIndex - 1 === state.index || (state.loop && state.index === state.maxIndex))
-const isNext = computed(() => state.activeIndex + 1 === state.index || (state.loop && state.index === 0))
+const isPrev = computed(() => {
+  if (state.activeIndex === 0) return state.loop && state.index === state.maxIndex
+  return state.activeIndex - 1 === state.index
+})
+const isNext = computed(() => {
+  if (state.activeIndex === state.maxIndex) return state.loop && state.index === 0
+  return state.activeIndex + 1 === state.index
+})
+const isPrimaryHorizontal = computed(() => state.animationType === ANIMATION_TYPE.PRIMARY_HORIZONTAL && state.maxIndex >= 2)
 </script>
 <template>
   <div :class="{
@@ -21,6 +28,7 @@ const isNext = computed(() => state.activeIndex + 1 === state.index || (state.lo
     [bem.bem('','active')]: isActive,
     [bem.bem('','prev')]: isPrev,
     [bem.bem('','next')]: isNext,
+    [bem.bem('','primary-horizontal')]: isPrimaryHorizontal,
   }">
     <slot name="default"></slot>
   </div>
@@ -33,17 +41,22 @@ const isNext = computed(() => state.activeIndex + 1 === state.index || (state.lo
   left: 0;
   top: 0;
   z-index: -1;
+  // TODO
+  transition: .8s;
 
   &--active {
     z-index: 0;
+    transform: translateX(0);
   }
 
-  &--prev {
-
+  &--prev,
+  &--primary-horizontal {
+    transform: translateX(-100%);
   }
 
-  &--next {
-
+  &--next,
+  &--primary-horizontal {
+    transform: translateX(100%);
   }
 }
 </style>

@@ -53,8 +53,19 @@ export const flattedChildren = (
 }
 
 export abstract class Communicator {
-  abstract state: Readonly<{ activeIndex: number, loop: boolean, maxIndex: number }>
+  abstract state: Readonly<CommunicatorState>
   abstract addItem(item: ComponentInternalInstance): void
   abstract delItem(item: ComponentInternalInstance): void
   abstract getIndex(item: ComponentInternalInstance): number
+}
+
+export interface CommunicatorState {
+  activeIndex: number,
+  loop: boolean,
+  maxIndex: number,
+  animationType: ANIMATION_TYPE,
+}
+
+export enum ANIMATION_TYPE {
+  PRIMARY_HORIZONTAL = "primary-horizontal",
 }
