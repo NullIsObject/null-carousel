@@ -1,6 +1,17 @@
-import {ComponentInternalInstance, computed, getCurrentInstance, provide, reactive, readonly, unref, watch} from "vue"
+import {
+  ComponentInternalInstance,
+  computed,
+  getCurrentInstance, onUnmounted,
+  provide,
+  reactive,
+  readonly,
+  unref,
+  watch,
+  watchEffect
+} from "vue"
 import lodash from "lodash"
 import {carouselCtxKey, Communicator, getOrderedChildren, ANIMATION_TYPE, CommunicatorState} from "./utils"
+import {useHover} from "null-carousel/private-utils/dom/useHover"
 
 export default function useCarousel(props: Required<Props>) {
   const state = reactive<CommunicatorState>({
@@ -32,6 +43,25 @@ export default function useCarousel(props: Required<Props>) {
 
   provide(carouselCtxKey, communicator)
 
+  const isHover = useHover()
+  !(() => {
+    let timer: number | undefined = void 0
+    onUnmounted(() => clearTimeout())
+    return watchEffect(() => {
+      ![props.interval, props.autoplay, isHover, state.activeIndex]
+      resetTimeout()
+    })
+    function resetTimeout() {
+      clearTimeout()
+      if (unref(isHover)) return
+      if (!props.autoplay) return
+      timer = window.setTimeout(() => next(), props.interval)
+    }
+    function clearTimeout() {
+      window.clearTimeout(timer)
+      timer = void 0
+    }
+  })()
   const maxIndex = computed(() => unref(childList).length - 1)
   watch(maxIndex, maxIndex => state.maxIndex = maxIndex)
   const activeIndex = computed({
@@ -70,4 +100,6 @@ export interface Props {
   loop?: boolean,
   animationType?: ANIMATION_TYPE,
   autoplay?: boolean,
+  // ms
+  interval?: number,
 }

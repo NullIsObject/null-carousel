@@ -14,8 +14,12 @@ const refCarousel = ref(null)
 </script>
 <template>
   <div>
-    <Carousel ref="refCarousel" width="500px" height="200px">
-      <CarouselItem v-for="i in state.data" class="item">{{ i }}</CarouselItem>
+    <Carousel ref="refCarousel" width="500px" height="200px" autoplay :interval="1000">
+      <!--<CarouselItem v-for="i in state.data" class="item">{{ i }}</CarouselItem>-->
+      <CarouselItem style="background-color: black"></CarouselItem>
+      <CarouselItem style="background-color: blue"></CarouselItem>
+      <CarouselItem style="background-color: green"></CarouselItem>
+      <CarouselItem style="background-color: yellow"></CarouselItem>
     </Carousel>
     <button @click="addItem">addItem</button>
   </div>

@@ -16,8 +16,8 @@ const props = withDefaults(defineProps<Props>(), {
   height: "100%",
   loop: true,
   animationType: ANIMATION_TYPE.PRIMARY_HORIZONTAL,
-  // TODO
   autoplay: false,
+  interval: 3000,
 })
 
 const rootStyle = computed(() => {
