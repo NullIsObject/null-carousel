@@ -68,4 +68,5 @@ export interface CommunicatorState {
 
 export enum ANIMATION_TYPE {
   PRIMARY_HORIZONTAL = "primary-horizontal",
+  PRIMARY_VERTICAL = "primary-vertical"
 }

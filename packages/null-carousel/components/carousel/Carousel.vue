@@ -49,7 +49,6 @@ const {activeIndex, prev, next} = useCarousel(props)
   --prev-btn-x-position: 0;
   --next-btn-x-position: 0;
   --prev-next-btn-opacity: 0;
-  background-color: red;
   position: relative;
 
   &:hover {
@@ -75,6 +74,7 @@ const {activeIndex, prev, next} = useCarousel(props)
     transform: translateX(var(--x-position)) translateY(-50%);
     opacity: var(--prev-next-btn-opacity);
     transition: 0.2s;
+    z-index: 1;
 
     &:hover {
       --prev-next-btn-opacity: 1;

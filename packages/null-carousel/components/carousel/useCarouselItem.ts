@@ -26,9 +26,10 @@ export default function useCarouselItem() {
   const index = computed(() => communicator.getIndex(currentInstance))
   watch(index, index => state.index = index, {immediate: true})
   watch(activeIndex, activeIndex => state.activeIndex = activeIndex, {immediate: true})
-  watch(() => communicator.state.loop, v => state.loop = v, {immediate: true})
   watch(() => communicator.state.maxIndex, v => state.maxIndex = v, {immediate: true})
   watch(() => communicator.state.animationType, v => state.animationType = v, {immediate: true})
+  const loop = computed(() => communicator.state.loop && communicator.state.maxIndex >= 2)
+  watch(loop, v => state.loop = v, {immediate: true})
 
   return {state: readonly(state)}
 }

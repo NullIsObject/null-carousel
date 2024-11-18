@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {BEM} from "null-carousel/private-utils/bem"
 import useCarouselItem from "./useCarouselItem"
-import {computed} from "vue"
+import {computed, ref, unref, watch} from "vue"
 import {ANIMATION_TYPE} from "./utils"
 
 const componentName = "carousel-item"
@@ -20,7 +20,11 @@ const isNext = computed(() => {
   if (state.activeIndex === state.maxIndex) return state.loop && state.index === 0
   return state.activeIndex + 1 === state.index
 })
-const isPrimaryHorizontal = computed(() => state.animationType === ANIMATION_TYPE.PRIMARY_HORIZONTAL && state.maxIndex >= 2)
+const isPrimaryHorizontal = computed(() => state.animationType === ANIMATION_TYPE.PRIMARY_HORIZONTAL)
+const isPrimaryVertical = computed(() => state.animationType === ANIMATION_TYPE.PRIMARY_VERTICAL)
+const lastActiveIndex = ref(-1)
+watch(() => state.activeIndex, (n, o) => lastActiveIndex.value = o ?? -1, {immediate: true})
+const isAnimating = computed(() => unref(isActive) || unref(lastActiveIndex) === state.index)
 </script>
 <template>
   <div :class="{
@@ -29,6 +33,9 @@ const isPrimaryHorizontal = computed(() => state.animationType === ANIMATION_TYP
     [bem.bem('','prev')]: isPrev,
     [bem.bem('','next')]: isNext,
     [bem.bem('','primary-horizontal')]: isPrimaryHorizontal,
+    [bem.bem('','primary-vertical')]: isPrimaryVertical,
+    [bem.bem('','animating')]: isAnimating,
+
   }">
     <slot name="default"></slot>
   </div>
@@ -40,23 +47,34 @@ const isPrimaryHorizontal = computed(() => state.animationType === ANIMATION_TYP
   position: absolute;
   left: 0;
   top: 0;
-  z-index: -1;
-  // TODO
-  transition: .8s;
+  z-index: 0;
+  transform: translateX(0);
+
+  &--animating {
+    transition: transform .4s ease-in-out;
+  }
 
   &--active {
-    z-index: 0;
+    z-index: 1;
     transform: translateX(0);
   }
 
-  &--prev,
-  &--primary-horizontal {
-    transform: translateX(-100%);
+  &--prev {
+    z-index: 1;
+    --offset: -100%;
   }
 
-  &--next,
+  &--next {
+    z-index: 1;
+    --offset: 100%;
+  }
+
   &--primary-horizontal {
-    transform: translateX(100%);
+    transform: translateX(var(--offset));
+  }
+
+  &--primary-vertical {
+    transform: translateY(var(--offset));
   }
 }
 </style>
